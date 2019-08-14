@@ -11,21 +11,6 @@ const (
 	screenHeight = 800
 )
 
-func textureFromBMP(renderer *sdl.Renderer, filename string) (texture *sdl.Texture) {
-	img, err := sdl.LoadBMP(filename)
-	if err != nil {
-		panic(fmt.Errorf("loading %v: %v", filename, err))
-	}
-	defer img.Free()
-
-	texture, err = renderer.CreateTextureFromSurface(img)
-	if err != nil {
-
-		panic(fmt.Errorf("creating  basic enemy texture: %v", err))
-	}
-	return texture
-}
-
 func main() {
 	fmt.Println("Starting up..")
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
@@ -48,28 +33,24 @@ func main() {
 	}
 	defer renderer.Destroy()
 
-	player1, err := newPlayer(renderer)
-	if err != nil {
-		fmt.Println("creating player:", err)
-	}
-	defer player1.destroy()
+	player1 := newPlayer(renderer)
+	elements = append(elements, player1)
 
-	var enemies []basicEnemy
 	for i := 0; i < 5; i++ {
 		for j := 0; j < 3; j++ {
-			x := (float64(i)/5)*screenWidth + (basicEnemySize / 2.0) + 30
+			x := (float64(i)/5)*screenWidth + (basicEnemySize / 2.0)
 			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0)
 
-			enemy, err := newBasicEnemy(renderer, x, y)
+			enemy := newBasicEnemy(renderer, vector{x: x, y: y})
 			if err != nil {
 				fmt.Println("creating enemy:", err)
 				return
 			}
-			defer enemy.destroy()
-			enemies = append(enemies, enemy)
+			elements = append(elements, enemy)
 		}
 	}
-	initBulletPool(renderer)
+
+	elements = append(elements, initBulletPool(renderer)...)
 
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
@@ -82,16 +63,16 @@ func main() {
 
 		renderer.SetDrawColor(255, 255, 255, 255)
 		renderer.Clear()
-		player1.draw(renderer)
-		player1.update()
 
-		for _, enemy := range enemies {
-			enemy.draw(renderer)
-		}
-
-		for _, b := range bulletPool {
-			b.draw(renderer)
-			b.update()
+		for _, currentElement := range elements {
+			if currentElement.active {
+				if err := currentElement.update(); err != nil {
+					fmt.Println("updating fail:", err)
+				}
+				if err := currentElement.draw(renderer); err != nil {
+					fmt.Println("drawing fail:", err)
+				}
+			}
 		}
 
 		renderer.Present()
