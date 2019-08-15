@@ -42,7 +42,7 @@ func newSpriteRenderer(parent *element, renderer *sdl.Renderer, filename string,
 		scaledHeight:  float64(height) * scale,
 	}
 
-	fmt.Println("new spriteRenderer:", result)
+	//fmt.Println("new spriteRenderer:", result)
 
 	return result
 }
@@ -61,5 +61,8 @@ func (context *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 func (context *spriteRenderer) onUpdate() error {
+	return nil
+}
+func (context *spriteRenderer) onCollision(other *element) error {
 	return nil
 }

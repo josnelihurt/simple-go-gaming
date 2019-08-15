@@ -8,7 +8,7 @@ import (
 
 const (
 	playerSpeed        = 2
-	playerShotCooldown = time.Millisecond * 150
+	playerShotCooldown = time.Millisecond * 200
 	playerScale        = 0.6
 )
 

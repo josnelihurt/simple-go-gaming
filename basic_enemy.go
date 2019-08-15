@@ -6,7 +6,7 @@ import (
 
 const (
 	basicEnemySize = 110
-	enemyScale     = 0.1
+	enemyScale     = 0.7
 )
 
 func newBasicEnemy(renderer *sdl.Renderer, position vector) *element {
@@ -16,7 +16,13 @@ func newBasicEnemy(renderer *sdl.Renderer, position vector) *element {
 	basicEnemy.rotation = 180
 	basicEnemy.active = true
 
-	sr := newSpriteRenderer(basicEnemy, renderer, "sprites/basic_enemy.bmp", enemyScale)
-	basicEnemy.addCompoenent(sr)
+	basicEnemy.addCompoenent(newSpriteRenderer(basicEnemy, renderer, "sprites/basic_enemy.bmp", enemyScale))
+	basicEnemy.addCompoenent(newVulnerableToBullets(basicEnemy))
+
+	basicEnemy.collisions = append(basicEnemy.collisions,
+		circle{
+			center: basicEnemy.position,
+			radius: 10,
+		})
 	return basicEnemy
 }
