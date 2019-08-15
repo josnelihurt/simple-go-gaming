@@ -11,25 +11,36 @@ const (
 	screenHeight = 800
 )
 
+var logger chan string
+
+func doLog(input <-chan string) {
+	for line := range input {
+		fmt.Println(line)
+	}
+}
+
 func main() {
-	fmt.Println("Starting up..")
+	logger = make(chan string, 1024)
+	defer close(logger)
+	go doLog(logger)
+	logger <- "Starting up.."
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		fmt.Println("initializing SDL:", err)
+		logger <- fmt.Sprintln("initializing SDL:", err)
 		panic(err)
 	}
 	window, err := sdl.CreateWindow(
 		"Demo game 1",
 		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		screenWidth, screenHeight,
-		sdl.WINDOW_OPENGL)
+		sdl.WINDOW_SHOWN)
 	if err != nil {
-		fmt.Println("initializing window:", err)
+		logger <- fmt.Sprintln("initializing window:", err)
 	}
 	defer window.Destroy()
 
 	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
-		fmt.Println("inititalizing renderer:", err)
+		logger <- fmt.Sprintln("inititalizing renderer:", err)
 	}
 	defer renderer.Destroy()
 
@@ -42,8 +53,9 @@ func main() {
 			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0)
 
 			enemy := newBasicEnemy(renderer, vector{x: x, y: y})
+			enemy.tag = fmt.Sprintf("x:%v,y:%v", i, j)
 			if err != nil {
-				fmt.Println("creating enemy:", err)
+				logger <- fmt.Sprintln("creating enemy:", err)
 				return
 			}
 			elements = append(elements, enemy)
@@ -56,7 +68,7 @@ func main() {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 			switch event.(type) {
 			case *sdl.QuitEvent:
-				fmt.Println("exiting:")
+				logger <- fmt.Sprintln("exiting:")
 				return
 			}
 		}
@@ -67,15 +79,15 @@ func main() {
 		for _, currentElement := range elements {
 			if currentElement.active {
 				if err := currentElement.update(); err != nil {
-					fmt.Println("updating fail:", err)
+					logger <- fmt.Sprintln("updating fail:", err)
 				}
 				if err := currentElement.draw(renderer); err != nil {
-					fmt.Println("drawing fail:", err)
+					logger <- fmt.Sprintln("drawing fail:", err)
 				}
 			}
 		}
 		if err := checkColisions(); err != nil {
-			fmt.Println("checking collisions:", err)
+			logger <- fmt.Sprintln("checking collisions:", err)
 		}
 
 		renderer.Present()

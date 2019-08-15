@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -27,14 +25,14 @@ func (context *keyboardMover) onUpdate() error {
 		if parent.position.x-(context.sr.scaledWidth/2.0) > 0 {
 			parent.position.x -= context.speed
 		} else {
-			fmt.Println("limit l:", parent.position)
+			//logger <- fmt.Sprintln("limit l:", parent.position)
 		}
 	}
 	if keys[sdl.SCANCODE_RIGHT] == 1 {
 		if parent.position.x+(context.sr.scaledWidth/2.0) < screenWidth {
 			parent.position.x += context.speed
 		} else {
-			fmt.Println("limit r:", parent.position)
+			//logger <- fmt.Sprintln("limit r:", parent.position)
 		}
 	}
 	return nil

@@ -6,7 +6,7 @@ import (
 
 const (
 	basicEnemySize = 110
-	enemyScale     = 0.7
+	enemyScale     = 1.0
 )
 
 func newBasicEnemy(renderer *sdl.Renderer, position vector) *element {
@@ -22,7 +22,7 @@ func newBasicEnemy(renderer *sdl.Renderer, position vector) *element {
 	basicEnemy.collisions = append(basicEnemy.collisions,
 		circle{
 			center: basicEnemy.position,
-			radius: 10,
+			radius: basicEnemySize / 2,
 		})
 	return basicEnemy
 }
