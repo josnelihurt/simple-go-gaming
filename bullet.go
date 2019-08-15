@@ -5,9 +5,8 @@ import (
 )
 
 const (
-	bulletSize  = 32
-	bulletSpeed = 2
-	bulletScale = 0.1
+	bulletSpeed = 5
+	bulletScale = 1.0
 )
 
 type bullet struct {
@@ -29,11 +28,12 @@ func newBullet(renderer *sdl.Renderer) *element {
 	bullet.collisions = append(bullet.collisions,
 		circle{
 			center: bullet.position,
-			radius: 10,
+			radius: 5,
 		})
 
 	bullet.active = false
-	bullet.rotation = 90
+	bullet.rotation = 0.0
+	bullet.tag = "bullet"
 
 	return bullet
 }

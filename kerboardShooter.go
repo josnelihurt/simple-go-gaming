@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -46,6 +45,5 @@ func (context *keyboardShooter) shoot(x, y float64) {
 		currentBullet.active = true
 		currentBullet.position.x = x
 		currentBullet.position.y = y
-		currentBullet.rotation = 270 * (math.Pi / 180)
 	}
 }

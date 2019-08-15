@@ -9,7 +9,7 @@ import (
 const (
 	playerSpeed        = 2
 	playerShotCooldown = time.Millisecond * 200
-	playerScale        = 0.6
+	playerScale        = 1.0
 )
 
 func newPlayer(renderer *sdl.Renderer) *element {
@@ -20,7 +20,7 @@ func newPlayer(renderer *sdl.Renderer) *element {
 	currentSpriteRenderer := newSpriteRenderer(player, renderer, "sprites/player.bmp", playerScale)
 	player.position = vector{
 		x: screenWidth / 2.0,
-		y: screenHeight - 100, //currentSpriteRenderer.scaledHeight/2.0,
+		y: screenHeight - currentSpriteRenderer.scaledHeight/2.0,
 	}
 	player.addCompoenent(currentSpriteRenderer)
 

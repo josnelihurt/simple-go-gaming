@@ -1,7 +1,7 @@
 package main
 
 import (
-	"math"
+	"fmt"
 
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -20,8 +20,7 @@ func newBulletMover(parent *element, speed float64) *bulletMover {
 
 func (context *bulletMover) onUpdate() error {
 	parent := context.parent
-	parent.position.x += bulletSpeed * math.Cos(parent.rotation)
-	parent.position.y += bulletSpeed * math.Sin(parent.rotation)
+	parent.position.y -= bulletSpeed
 
 	if parent.position.x > screenWidth || parent.position.x < 0 ||
 		parent.position.y < 0 {
@@ -38,5 +37,10 @@ func (context *bulletMover) onDraw(renderer *sdl.Renderer) error {
 }
 
 func (context *bulletMover) onCollision(other *element) error {
+	if other.tag == "bullet" {
+		return nil
+	}
+	context.parent.active = false
+	logger <- fmt.Sprintf("bullet has crashed with %v :", other)
 	return nil
 }

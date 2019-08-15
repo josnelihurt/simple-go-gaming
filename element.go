@@ -23,6 +23,7 @@ type element struct {
 	active     bool
 	collisions []circle
 	components []component
+	tag        string
 }
 
 func (context *element) runOnAllComponents(callback func(component, *sdl.Renderer) error, renderer *sdl.Renderer) error {

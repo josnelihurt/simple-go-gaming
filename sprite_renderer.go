@@ -42,7 +42,7 @@ func newSpriteRenderer(parent *element, renderer *sdl.Renderer, filename string,
 		scaledHeight:  float64(height) * scale,
 	}
 
-	//fmt.Println("new spriteRenderer:", result)
+	//logger <- fmt.Sprintln("new spriteRenderer:", result)
 
 	return result
 }
@@ -50,14 +50,13 @@ func (context *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
 	// Converting coordinates to top left of sprite
 	x := context.parent.position.x - context.scaledWidth/2.0
 	y := context.parent.position.y - context.scaledHeight/2.0
-	//fmt.Println(x, y)
+
 	renderer.CopyEx(context.texture,
 		&sdl.Rect{X: 0, Y: 0, W: int32(context.originalWidth), H: int32(context.orginalHeight)},
 		&sdl.Rect{X: int32(x), Y: int32(y), W: int32(context.scaledWidth), H: int32(context.scaledHeight)},
 		context.parent.rotation,
 		&sdl.Point{X: int32(context.scaledWidth / 2.0), Y: int32(context.scaledHeight / 2.0)},
 		sdl.FLIP_NONE)
-
 	return nil
 }
 func (context *spriteRenderer) onUpdate() error {
