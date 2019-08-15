@@ -18,9 +18,6 @@ func newBulletMover(parent *element, speed float64) *bulletMover {
 	}
 }
 
-func (context *bulletMover) onDraw(renderer *sdl.Renderer) error {
-	return nil
-}
 func (context *bulletMover) onUpdate() error {
 	parent := context.parent
 	parent.position.x += bulletSpeed * math.Cos(parent.rotation)
@@ -30,5 +27,16 @@ func (context *bulletMover) onUpdate() error {
 		parent.position.y < 0 {
 		parent.active = false
 	}
+
+	context.parent.collisions[0].center = parent.position
+
+	return nil
+}
+
+func (context *bulletMover) onDraw(renderer *sdl.Renderer) error {
+	return nil
+}
+
+func (context *bulletMover) onCollision(other *element) error {
 	return nil
 }

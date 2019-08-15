@@ -14,12 +14,14 @@ type vector struct {
 type component interface {
 	onUpdate() error
 	onDraw(renderer *sdl.Renderer) error
+	onCollision(other *element) error
 }
 
 type element struct {
 	position   vector
 	rotation   float64
 	active     bool
+	collisions []circle
 	components []component
 }
 
@@ -68,6 +70,15 @@ func (context *element) getComponent(withType component) component {
 	}
 
 	panic(fmt.Sprintf("there is not such component %v", componentType))
+}
+
+func (context *element) collision(other *element) error {
+	for _, currentComponent := range context.components {
+		if err := currentComponent.onCollision(other); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 var elements []*element
