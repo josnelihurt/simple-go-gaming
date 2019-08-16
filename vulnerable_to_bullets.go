@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -22,7 +20,7 @@ func (context *vulnerableToBullets) onUpdate() error {
 func (context *vulnerableToBullets) onCollision(other *element) error {
 	if other.tag == "bullet" {
 		context.parent.active = false
-		logger <- fmt.Sprintf("%v was hit by a bullet %v", context.parent, other)
+		//logger <- fmt.Sprintf("%v was hit by a bullet %v", context.parent, other)
 	}
 	return nil
 }
