@@ -19,7 +19,7 @@ type keyboardShooter struct {
 func newKeyboardShooter(parent *element, cooldown time.Duration) *keyboardShooter {
 
 	shootSoundRaw, shootSound := sdl.LoadWAV("sounds/NFF-laser.wav")
-	sdl.MixAudio(shootSoundRaw, shootSoundRaw, shootSound.Size, 50)
+	//sdl.MixAudio(shootSoundRaw, shootSoundRaw, shootSound.Size, 50)
 
 	logger <- fmt.Sprintf("sound %v ", len(shootSoundRaw))
 	currenAudioDriver := sdl.GetCurrentAudioDriver()
