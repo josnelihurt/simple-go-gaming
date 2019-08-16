@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -12,17 +13,28 @@ type keyboardShooter struct {
 	lastShot      time.Time
 	shootSound    *sdl.AudioSpec
 	shootSoundRaw []byte
+	audioDevice   sdl.AudioDeviceID
 }
 
 func newKeyboardShooter(parent *element, cooldown time.Duration) *keyboardShooter {
 
 	shootSoundRaw, shootSound := sdl.LoadWAV("sounds/NFF-laser.wav")
+	sdl.MixAudio(shootSoundRaw, shootSoundRaw, shootSound.Size, 50)
+
+	logger <- fmt.Sprintf("sound %v ", len(shootSoundRaw))
+	currenAudioDriver := sdl.GetCurrentAudioDriver()
+	logger <- currenAudioDriver
+	dev, err := sdl.OpenAudioDevice("", false, shootSound, nil, 0)
+	if err != nil {
+		logger <- fmt.Sprintf("error opeing audio dev:%v", err)
+	}
 
 	return &keyboardShooter{
 		parent:        parent,
 		cooldown:      cooldown,
 		shootSound:    shootSound,
 		shootSoundRaw: shootSoundRaw,
+		audioDevice:   dev,
 	}
 }
 func (context *keyboardShooter) onUpdate() error {
@@ -32,10 +44,8 @@ func (context *keyboardShooter) onUpdate() error {
 
 	if keys[sdl.SCANCODE_SPACE] == 1 {
 		if time.Since(context.lastShot) > context.cooldown {
-			currenAudioDriver := sdl.GetCurrentAudioDriver()
-			logger <- currenAudioDriver
-			dev, _ := sdl.OpenAudioDevice(currenAudioDriver, false, context.shootSound, nil, 0)
-			sdl.QueueAudio(dev, context.shootSoundRaw)
+			sdl.QueueAudio(context.audioDevice, context.shootSoundRaw)
+			sdl.PauseAudioDevice(context.audioDevice, false)
 			sprite := parent.getComponent(&spriteRenderer{}).(*spriteRenderer)
 			context.shoot(parent.position.x+23, parent.position.y-sprite.scaledHeight/2)
 			context.shoot(parent.position.x-23, parent.position.y-sprite.scaledHeight/2)
