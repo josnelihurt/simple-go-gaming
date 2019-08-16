@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -43,19 +44,19 @@ func check(e error) {
 	}
 }
 func unPackFileFromAsset(folder, filename string) {
-	//os.Mkdir(folder, os.ModePerm)
-	//out := fmt.Sprintf("%v/%v", folder, filename)
-	//if _, err := os.Stat(out); os.IsNotExist(err) {
-	//	file, _ := Asset(out)
-	//	fileIO, _ := os.Create(out)
-	//	if _, err := fileIO.Write(file); err == nil {
-	//		logger <- fmt.Sprintf("%v unpacked from resources", out)
-	//	}
-	//	fileIO.Sync()
-	//	fileIO.Close()
-	//} else {
-	//	logger <- fmt.Sprintf("%v already in fs", out)
-	//}
+	os.Mkdir(folder, os.ModePerm)
+	out := fmt.Sprintf("%v/%v", folder, filename)
+	if _, err := os.Stat(out); os.IsNotExist(err) {
+		file, _ := Asset(out)
+		fileIO, _ := os.Create(out)
+		if _, err := fileIO.Write(file); err == nil {
+			logger <- fmt.Sprintf("%v unpacked from resources", out)
+		}
+		fileIO.Sync()
+		fileIO.Close()
+	} else {
+		logger <- fmt.Sprintf("%v already in fs", out)
+	}
 }
 
 func loadResources() {
@@ -66,6 +67,7 @@ func loadResources() {
 	unPackFileFromAsset("sprites", "basic_enemy.bmp")
 	unPackFileFromAsset("sprites", "bullet.bmp")
 	unPackFileFromAsset("sprites", "player.bmp")
+	unPackFileFromAsset("sounds", "NFF-laser.wav")
 }
 func main() {
 	logger = make(chan string, 1024)
