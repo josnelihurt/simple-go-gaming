@@ -22,7 +22,6 @@ func textureFromBMP(renderer *sdl.Renderer, filename string) (texture *sdl.Textu
 
 	texture, err = renderer.CreateTextureFromSurface(img)
 	if err != nil {
-
 		panic(fmt.Errorf("creating  basic enemy texture: %v", err))
 	}
 	return texture

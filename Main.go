@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -37,11 +38,44 @@ func createEnemySwarm(renderer *sdl.Renderer) (swarm []*element) {
 	return swarm
 }
 
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
+func unPackFileFromAsset(folder, filename string) {
+	os.Mkdir(folder, os.ModePerm)
+	out := fmt.Sprintf("%v/%v", folder, filename)
+	if _, err := os.Stat(out); os.IsNotExist(err) {
+		file, _ := Asset(out)
+		fileIO, _ := os.Create(out)
+		if _, err := fileIO.Write(file); err == nil {
+			logger <- fmt.Sprintf("%v unpacked from resources", out)
+		}
+		fileIO.Sync()
+		fileIO.Close()
+	} else {
+		logger <- fmt.Sprintf("%v already in fs", out)
+	}
+}
+
+func loadResources() {
+	// remember you must run
+	// $ go-get -u github.com/go-bindata/...
+	// $ go-bindata sprites/... fonts/...
+	unPackFileFromAsset("fonts", "Starjout.ttf")
+	unPackFileFromAsset("sprites", "basic_enemy.bmp")
+	unPackFileFromAsset("sprites", "bullet.bmp")
+	unPackFileFromAsset("sprites", "player.bmp")
+}
 func main() {
 	logger = make(chan string, 1024)
-	defer close(logger)
 	go doLog(logger)
 	logger <- "Starting up.."
+	defer close(logger)
+
+	loadResources()
+
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		logger <- fmt.Sprintln("initializing SDL:", err)
 		panic(err)
