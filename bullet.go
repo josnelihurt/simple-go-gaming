@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	bulletSpeed = 5
+	bulletSpeed = 10
 	bulletScale = 1.0
 )
 
@@ -14,9 +14,10 @@ type bullet struct {
 	x, y    float64
 	active  bool
 	angle   float64
+	score   *scoreRenderer
 }
 
-func newBullet(renderer *sdl.Renderer) *element {
+func newBullet(renderer *sdl.Renderer, scoreRenderer *scoreRenderer) *element {
 	bullet := &element{}
 
 	sr := newSpriteRenderer(bullet, renderer, "sprites/bullet.bmp", bulletScale)
@@ -24,6 +25,7 @@ func newBullet(renderer *sdl.Renderer) *element {
 
 	mover := newBulletMover(bullet, bulletSpeed)
 	bullet.addCompoenent(mover)
+	bullet.addCompoenent(scoreRenderer)
 
 	bullet.collisions = append(bullet.collisions,
 		circle{
@@ -40,9 +42,9 @@ func newBullet(renderer *sdl.Renderer) *element {
 
 var bulletPool []*element
 
-func initBulletPool(renderer *sdl.Renderer) []*element {
+func initBulletPool(renderer *sdl.Renderer, scoreRenderer *scoreRenderer) []*element {
 	for i := 0; i < 30; i++ {
-		b := newBullet(renderer)
+		b := newBullet(renderer, scoreRenderer)
 		bulletPool = append(bulletPool, b)
 	}
 	return bulletPool
