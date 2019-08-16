@@ -7,6 +7,10 @@ import (
 	"github.com/veandco/go-sdl2/ttf"
 )
 
+const (
+	scoreFontSize = 30
+)
+
 type scoreRenderer struct {
 	currenValue    int32
 	newValue       int32
@@ -40,7 +44,7 @@ func (context *scoreRenderer) onDraw(renderer *sdl.Renderer) error {
 	if context.currenValue != context.newValue {
 		logger <- fmt.Sprintf("update texture to:%v", context.newValue)
 
-		surface, err := context.font.RenderUTF8Solid(fmt.Sprintf("%3d", context.newValue), context.textColor)
+		surface, err := context.font.RenderUTF8Solid(fmt.Sprintf("%03d", context.newValue), context.textColor)
 		if err != nil {
 			return fmt.Errorf("creating surface from font %v", err)
 		}
@@ -57,7 +61,7 @@ func (context *scoreRenderer) onDraw(renderer *sdl.Renderer) error {
 
 		context.currenValue = context.newValue
 	}
-	x := screenWidth - context.width - 10
+	x := (screenWidth - context.width) / 2
 	y := 10
 
 	renderer.Copy(context.texture,
@@ -72,7 +76,7 @@ func (context *scoreRenderer) onCollision(other *element) error {
 	return nil
 }
 func loadFont() (font *ttf.Font, err error) {
-	font, err = ttf.OpenFont("fonts/Starjout.ttf", 26)
+	font, err = ttf.OpenFont("fonts/Starjout.ttf", scoreFontSize)
 	if err != nil {
 		return nil, fmt.Errorf("initializing font:%v", err)
 	}
