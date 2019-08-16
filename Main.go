@@ -75,14 +75,6 @@ func main() {
 
 	loadResources()
 
-	shootSoundRaw, shootSound := sdl.LoadWAV("sounds/NFF-laser.wav")
-	logger <- fmt.Sprintf("sound %v ", len(shootSoundRaw))
-	currenAudioDriver := sdl.GetCurrentAudioDriver()
-	logger <- currenAudioDriver
-	dev, _ := sdl.OpenAudioDevice("", false, shootSound, nil, 0)
-	sdl.QueueAudio(dev, shootSoundRaw)
-	sdl.PauseAudioDevice(dev, false)
-
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		logger <- fmt.Sprintln("initializing SDL:", err)
 		panic(err)
