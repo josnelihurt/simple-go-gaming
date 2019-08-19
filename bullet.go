@@ -20,7 +20,7 @@ type bullet struct {
 func newBullet(renderer *sdl.Renderer, scoreRenderer *scoreRenderer) *element {
 	bullet := &element{}
 
-	sr := newSpriteRenderer(bullet, renderer, "sprites/bullet.bmp", bulletScale)
+	sr := newSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale)
 	bullet.addCompoenent(sr)
 
 	mover := newBulletMover(bullet, bulletSpeed)

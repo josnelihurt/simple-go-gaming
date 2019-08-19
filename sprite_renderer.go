@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -13,21 +14,24 @@ type spriteRenderer struct {
 	scaledWidth, scaledHeight    float64
 }
 
-func textureFromBMP(renderer *sdl.Renderer, filename string) (texture *sdl.Texture) {
-	img, err := sdl.LoadBMP(filename)
+func textureFromFile(renderer *sdl.Renderer, filename string) (texture *sdl.Texture) {
+	var image *sdl.Surface
+	var err error
+
+	image, err = img.Load(filename)
 	if err != nil {
 		panic(fmt.Errorf("loading %v: %v", filename, err))
 	}
-	defer img.Free()
+	defer image.Free()
 
-	texture, err = renderer.CreateTextureFromSurface(img)
+	texture, err = renderer.CreateTextureFromSurface(image)
 	if err != nil {
 		panic(fmt.Errorf("creating  basic enemy texture: %v", err))
 	}
 	return texture
 }
 func newSpriteRenderer(parent *element, renderer *sdl.Renderer, filename string, scale float64) *spriteRenderer {
-	texture := textureFromBMP(renderer, filename)
+	texture := textureFromFile(renderer, filename)
 	_, _, width, height, err := texture.Query()
 	if err != nil {
 		panic(fmt.Errorf("querying texture:%v", err))

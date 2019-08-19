@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -10,7 +9,7 @@ import (
 )
 
 const (
-	screenWidth          = 600
+	screenWidth          = 1200
 	screenHeight         = 800
 	targetTicksPerSecond = 60
 )
@@ -25,9 +24,11 @@ func doLog(input <-chan string) {
 }
 
 func createEnemySwarm(renderer *sdl.Renderer) (swarm []*element) {
-	for i := 0; i < 5; i++ {
-		for j := 0; j < 3; j++ {
-			x := (float64(i)/5)*screenWidth + (basicEnemySize / 2.0)
+	const rows = 3
+	const colums = 8
+	for i := 0; i < colums; i++ {
+		for j := 0; j < rows; j++ {
+			x := (float64(i)/colums)*screenWidth + (basicEnemySize / 2.0)
 			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0) + 50
 
 			enemy := newBasicEnemy(renderer, vector{x: x, y: y})
@@ -38,45 +39,7 @@ func createEnemySwarm(renderer *sdl.Renderer) (swarm []*element) {
 	return swarm
 }
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-func unPackFileFromAsset(folder, filename string) {
-	os.Mkdir(folder, os.ModePerm)
-	out := fmt.Sprintf("%v/%v", folder, filename)
-	if _, err := os.Stat(out); os.IsNotExist(err) {
-		file, _ := Asset(out)
-		fileIO, _ := os.Create(out)
-		if _, err := fileIO.Write(file); err == nil {
-			logger <- fmt.Sprintf("%v unpacked from resources", out)
-		}
-		fileIO.Sync()
-		fileIO.Close()
-	} else {
-		logger <- fmt.Sprintf("%v already in fs", out)
-	}
-}
-
-func loadResources() {
-	// remember you must run
-	// $ go get -u github.com/jteeuwen/go-bindata/...
-	// $ go-bindata sprites/... fonts/... sounds/...
-	unPackFileFromAsset("fonts", "Starjout.ttf")
-	unPackFileFromAsset("sprites", "basic_enemy.bmp")
-	unPackFileFromAsset("sprites", "bullet.bmp")
-	unPackFileFromAsset("sprites", "player.bmp")
-	unPackFileFromAsset("sounds", "NFF-laser.wav")
-}
-func main() {
-	logger = make(chan string, 1024)
-	go doLog(logger)
-	logger <- "Starting up.."
-	defer close(logger)
-
-	loadResources()
-
+func createRenderer() (*sdl.Renderer, *sdl.Window, error) {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		logger <- fmt.Sprintln("initializing SDL:", err)
 		panic(err)
@@ -88,22 +51,21 @@ func main() {
 		sdl.WINDOW_SHOWN)
 	if err != nil {
 		logger <- fmt.Sprintln("initializing window:", err)
-		return
+		return nil, nil, err
 	}
-	defer window.Destroy()
-
 	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		logger <- fmt.Sprintf("inititalizing renderer:%v", err)
-		return
+		return nil, nil, err
 	}
-	defer renderer.Destroy()
 
 	if err := ttf.Init(); err != nil {
 		logger <- fmt.Sprintf("initializing ttf:%v", err)
-		return
+		return nil, nil, err
 	}
-
+	return renderer, window, nil
+}
+func loadElements(renderer *sdl.Renderer) {
 	scoreRenderer := newScoreRenderer()
 	score := &element{active: true}
 	score.addCompoenent(scoreRenderer)
@@ -111,37 +73,59 @@ func main() {
 	elements = append(elements, newPlayer(renderer))
 	elements = append(elements, initBulletPool(renderer, scoreRenderer)...)
 	elements = append(elements, createEnemySwarm(renderer)...)
+}
 
+func main() {
+	logger = make(chan string, 1024)
+	go doLog(logger)
+	logger <- "Starting up.."
+	defer close(logger)
+
+	loadResources()
+	renderer, window, err := createRenderer()
+	if err != nil {
+		logger <- "unable to create renderer"
+	}
+
+	loadElements(renderer)
+	defer window.Destroy()
+	defer renderer.Destroy()
+
+	backround := newBackground(renderer)
 	for {
-		frameStartTimer := time.Now()
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				logger <- fmt.Sprintln("exiting:")
-				return
-			}
-		}
+		//if continueFlag := gameLoop(renderer); continueFlag == false {
+		//	break
+		//}
 
-		renderer.SetDrawColor(255, 255, 255, 255)
+		frameStartTimer := time.Now()
+		if continueFlag := inputHandler(); continueFlag == false {
+			logger <- fmt.Sprintf("exiting gameLoop:")
+			return
+		}
+		renderer.SetDrawColor(255, 255, 0, 0)
 		renderer.Clear()
+		if err := backround.update(); err != nil {
+			logger <- fmt.Sprintf("updating fail:%v", err)
+		}
+		if err := backround.draw(renderer); err != nil {
+			logger <- fmt.Sprintf("drawing fail:%v", err)
+		}
 
 		for _, currentElement := range elements {
 			if currentElement.active {
 				if err := currentElement.update(); err != nil {
-					logger <- fmt.Sprintln("updating fail:", err)
+					logger <- fmt.Sprintf("updating fail:%v", err)
 				}
 				if err := currentElement.draw(renderer); err != nil {
-					logger <- fmt.Sprintln("drawing fail:", err)
+					logger <- fmt.Sprintf("drawing fail:%v", err)
 				}
 			}
 		}
 		if err := checkColisions(); err != nil {
-			logger <- fmt.Sprintln("checking collisions:", err)
+			logger <- fmt.Sprintf("checking collisions:%v", err)
 		}
 
 		renderer.Present()
 		delta = time.Since(frameStartTimer).Seconds() * targetTicksPerSecond
-
 	}
-
 }

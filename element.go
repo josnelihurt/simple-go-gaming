@@ -14,15 +14,15 @@ type vector struct {
 type component interface {
 	onUpdate() error
 	onDraw(renderer *sdl.Renderer) error
-	onCollision(other *element) error
-}
+		onCollision(other *element) error
+	}
 
-type element struct {
-	position   vector
-	rotation   float64
-	active     bool
-	collisions []circle
-	components []component
+	type element struct {
+		position   vector
+		rotation   float64
+		active     bool
+		collisions []circle
+		components []component
 	tag        string
 }
 
