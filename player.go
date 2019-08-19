@@ -9,7 +9,7 @@ import (
 const (
 	playerSpeed        = 5
 	playerShotCooldown = time.Millisecond * 200
-	playerScale        = 1.0
+	playerScale        = 0.7
 )
 
 func newPlayer(renderer *sdl.Renderer) *element {
@@ -17,7 +17,7 @@ func newPlayer(renderer *sdl.Renderer) *element {
 	player.active = true
 	player.rotation = 180
 
-	currentSpriteRenderer := newSpriteRenderer(player, renderer, "sprites/player.bmp", playerScale)
+	currentSpriteRenderer := newSpriteRenderer(player, renderer, "sprites/player.png", playerScale)
 	player.position = vector{
 		x: screenWidth / 2.0,
 		y: screenHeight - currentSpriteRenderer.scaledHeight/2.0,

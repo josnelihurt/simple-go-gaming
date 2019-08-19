@@ -32,7 +32,7 @@ func newScoreRenderer() *scoreRenderer {
 	return &scoreRenderer{
 		currenValue:    -1,
 		font:           font,
-		textColor:      sdl.Color{R: 0, G: 0, B: 0},
+		textColor:      sdl.Color{R: 255, G: 255, B: 255},
 		backgoundColor: sdl.Color{R: 255, G: 255, B: 255},
 	}
 }
