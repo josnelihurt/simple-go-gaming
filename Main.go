@@ -65,14 +65,16 @@ func createRenderer() (*sdl.Renderer, *sdl.Window, error) {
 	}
 	return renderer, window, nil
 }
-func loadElements(renderer *sdl.Renderer) {
+func loadElements(elementPool *elementPool, renderer *sdl.Renderer) {
 	scoreRenderer := newScoreRenderer()
 	score := &element{active: true}
 	score.addCompoenent(scoreRenderer)
-	elements = append(elements, score)
-	elements = append(elements, newPlayer(renderer))
-	elements = append(elements, initBulletPool(renderer, scoreRenderer)...)
-	elements = append(elements, createEnemySwarm(renderer)...)
+	score.z = 10
+	elementPool.insertElement(score)
+	elementPool.insertElement(newPlayer(renderer))
+	elementPool.insertSlice(initBulletPool(renderer, scoreRenderer))
+	elementPool.insertSlice(createEnemySwarm(renderer))
+	elementPool.insertElement(newBackground(renderer))
 }
 
 func main() {
@@ -87,16 +89,16 @@ func main() {
 		logger <- "unable to create renderer"
 	}
 
-	loadElements(renderer)
+	elementPool := newElementPool()
+	loadElements(&elementPool, renderer)
+	for _, currentElement := range elementPool.elements {
+		logger <- fmt.Sprintf("Element :%v", currentElement)
+	}
+
 	defer window.Destroy()
 	defer renderer.Destroy()
 
-	backround := newBackground(renderer)
 	for {
-		//if continueFlag := gameLoop(renderer); continueFlag == false {
-		//	break
-		//}Texture dimensions are limited to 8192x8192
-
 		frameStartTimer := time.Now()
 		if continueFlag := inputHandler(); continueFlag == false {
 			logger <- fmt.Sprintf("exiting gameLoop:")
@@ -104,14 +106,8 @@ func main() {
 		}
 		renderer.SetDrawColor(255, 255, 0, 0)
 		renderer.Clear()
-		if err := backround.update(); err != nil {
-			logger <- fmt.Sprintf("updating fail:%v", err)
-		}
-		if err := backround.draw(renderer); err != nil {
-			logger <- fmt.Sprintf("drawing fail:%v", err)
-		}
 
-		for _, currentElement := range elements {
+		for _, currentElement := range elementPool.elements {
 			if currentElement.active {
 				if err := currentElement.update(); err != nil {
 					logger <- fmt.Sprintf("updating fail:%v", err)
@@ -121,7 +117,7 @@ func main() {
 				}
 			}
 		}
-		if err := checkColisions(); err != nil {
+		if err := checkColisions(&elementPool); err != nil {
 			logger <- fmt.Sprintf("checking collisions:%v", err)
 		}
 

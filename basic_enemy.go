@@ -11,6 +11,7 @@ const (
 
 func newBasicEnemy(renderer *sdl.Renderer, position vector) *element {
 	basicEnemy := &element{}
+	basicEnemy.z = 10
 
 	basicEnemy.position = position
 	basicEnemy.rotation = 0
