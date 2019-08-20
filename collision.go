@@ -12,7 +12,9 @@ func collides(c1, c2 circle) bool {
 	return dist <= c1.radius+c2.radius
 }
 
-func checkColisions() error {
+func checkColisions(pool *elementPool) error {
+	elements := pool.elements // I don't like it
+
 	for i := 0; i < len(elements)-1; i++ {
 		for j := 0; j < len(elements); j++ {
 			for _, currenCollision1 := range elements[i].collisions {

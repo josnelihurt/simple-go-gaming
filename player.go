@@ -14,6 +14,7 @@ const (
 
 func newPlayer(renderer *sdl.Renderer) *element {
 	player := &element{}
+	player.z = 10
 	player.active = true
 	player.rotation = 180
 

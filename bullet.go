@@ -19,6 +19,7 @@ type bullet struct {
 
 func newBullet(renderer *sdl.Renderer, scoreRenderer *scoreRenderer) *element {
 	bullet := &element{}
+	bullet.z = 10
 
 	sr := newSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale)
 	bullet.addCompoenent(sr)
