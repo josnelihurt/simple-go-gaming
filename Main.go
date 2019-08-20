@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	screenWidth          = 1200
+	screenWidth          = 720
 	screenHeight         = 800
 	targetTicksPerSecond = 60
 )
@@ -25,7 +25,7 @@ func doLog(input <-chan string) {
 
 func createEnemySwarm(renderer *sdl.Renderer) (swarm []*element) {
 	const rows = 3
-	const colums = 8
+	const colums = 6
 	for i := 0; i < colums; i++ {
 		for j := 0; j < rows; j++ {
 			x := (float64(i)/colums)*screenWidth + (basicEnemySize / 2.0)
@@ -95,7 +95,7 @@ func main() {
 	for {
 		//if continueFlag := gameLoop(renderer); continueFlag == false {
 		//	break
-		//}
+		//}Texture dimensions are limited to 8192x8192
 
 		frameStartTimer := time.Now()
 		if continueFlag := inputHandler(); continueFlag == false {
