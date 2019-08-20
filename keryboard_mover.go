@@ -24,15 +24,21 @@ func (context *keyboardMover) onUpdate() error {
 	if keys[sdl.SCANCODE_LEFT] == 1 {
 		if parent.position.x-(context.sr.scaledWidth/2.0) > 0 {
 			parent.position.x -= context.speed * delta
-		} else {
-			//logger <- fmt.Sprintln("limit l:", parent.position)
 		}
 	}
 	if keys[sdl.SCANCODE_RIGHT] == 1 {
 		if parent.position.x+(context.sr.scaledWidth/2.0) < screenWidth {
 			parent.position.x += context.speed * delta
-		} else {
-			//logger <- fmt.Sprintln("limit r:", parent.position)
+		}
+	}
+	if keys[sdl.SCANCODE_UP] == 1 {
+		if parent.position.y+(context.sr.scaledHeight/2.0) > 4*screenHeight/5.0 {
+			parent.position.y -= context.speed * delta
+		}
+	}
+	if keys[sdl.SCANCODE_DOWN] == 1 {
+		if parent.position.y+(context.sr.scaledHeight/2.0) < screenHeight {
+			parent.position.y += context.speed * delta
 		}
 	}
 	return nil

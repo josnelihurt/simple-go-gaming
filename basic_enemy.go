@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"fmt"
 )
 
 const (
@@ -26,4 +27,20 @@ func newBasicEnemy(renderer *sdl.Renderer, position vector) *element {
 			radius: basicEnemySize / 2,
 		})
 	return basicEnemy
+}
+
+func createEnemySwarm(renderer *sdl.Renderer) (swarm []*element) {
+	const rows = 3
+	const colums = 6
+	for i := 0; i < colums; i++ {
+		for j := 0; j < rows; j++ {
+			x := (float64(i)/colums)*screenWidth + (basicEnemySize / 2.0)
+			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0) + 50
+
+			enemy := newBasicEnemy(renderer, vector{x: x, y: y})
+			enemy.tag = fmt.Sprintf("x:%v,y:%v", i, j)
+			swarm = append(swarm, enemy)
+		}
+	}
+	return swarm
 }

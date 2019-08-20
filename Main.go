@@ -22,23 +22,6 @@ func doLog(input <-chan string) {
 		fmt.Println(line)
 	}
 }
-
-func createEnemySwarm(renderer *sdl.Renderer) (swarm []*element) {
-	const rows = 3
-	const colums = 6
-	for i := 0; i < colums; i++ {
-		for j := 0; j < rows; j++ {
-			x := (float64(i)/colums)*screenWidth + (basicEnemySize / 2.0)
-			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0) + 50
-
-			enemy := newBasicEnemy(renderer, vector{x: x, y: y})
-			enemy.tag = fmt.Sprintf("x:%v,y:%v", i, j)
-			swarm = append(swarm, enemy)
-		}
-	}
-	return swarm
-}
-
 func createRenderer() (*sdl.Renderer, *sdl.Window, error) {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		logger <- fmt.Sprintln("initializing SDL:", err)
@@ -106,17 +89,7 @@ func main() {
 		}
 		renderer.SetDrawColor(255, 255, 0, 0)
 		renderer.Clear()
-
-		for _, currentElement := range elementPool.elements {
-			if currentElement.active {
-				if err := currentElement.update(); err != nil {
-					logger <- fmt.Sprintf("updating fail:%v", err)
-				}
-				if err := currentElement.draw(renderer); err != nil {
-					logger <- fmt.Sprintf("drawing fail:%v", err)
-				}
-			}
-		}
+		elementPool.updateElements(renderer)
 		if err := checkColisions(&elementPool); err != nil {
 			logger <- fmt.Sprintf("checking collisions:%v", err)
 		}
