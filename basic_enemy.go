@@ -1,13 +1,15 @@
 package main
 
 import (
-	"github.com/veandco/go-sdl2/sdl"
 	"fmt"
+
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 const (
 	basicEnemySize = 110
 	enemyScale     = 1.0
+	enemySpeed     = 1.0
 )
 
 func newBasicEnemy(renderer *sdl.Renderer, position vector) *element {
@@ -20,6 +22,7 @@ func newBasicEnemy(renderer *sdl.Renderer, position vector) *element {
 
 	basicEnemy.addCompoenent(newSpriteRenderer(basicEnemy, renderer, "sprites/basic_enemy.png", enemyScale))
 	basicEnemy.addCompoenent(newVulnerableToBullets(basicEnemy))
+	basicEnemy.addCompoenent(newEnemyMover())
 
 	basicEnemy.collisions = append(basicEnemy.collisions,
 		circle{
