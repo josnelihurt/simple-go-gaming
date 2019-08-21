@@ -32,7 +32,10 @@ func NewTextRenderer(position *Vector, fontSize int, textColor sdl.Color) *TextR
 		position:  position,
 	}
 }
-func (context *TextRenderer) onDraw(renderer *sdl.Renderer) error {
+func (context *TextRenderer) SetNewText(text string) {
+	context.newValue = text
+}
+func (context *TextRenderer) OnDraw(renderer *sdl.Renderer) error {
 	if context.currenValue != context.newValue {
 		util.Logger <- fmt.Sprintf("n:%v,o:%v", context.newValue, context.currenValue)
 		surface, err := context.font.RenderUTF8Solid(context.newValue, context.textColor)
@@ -52,17 +55,17 @@ func (context *TextRenderer) onDraw(renderer *sdl.Renderer) error {
 
 		context.currenValue = context.newValue
 	}
-	x := context.position.x
-	y := context.position.y
+	x := context.position.X
+	y := context.position.Y
 
 	renderer.Copy(context.texture,
 		&sdl.Rect{X: 0, Y: 0, W: int32(context.width), H: int32(context.height)},
 		&sdl.Rect{X: int32(x), Y: int32(y), W: int32(context.width), H: int32(context.height)})
 	return nil
 }
-func (context *TextRenderer) onUpdate() error {
+func (context *TextRenderer) OnUpdate() error {
 	return nil
 }
-func (context *TextRenderer) onCollision(other *Element) error {
+func (context *TextRenderer) OnCollision(other *Element) error {
 	return nil
 }

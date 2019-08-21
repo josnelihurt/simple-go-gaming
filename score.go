@@ -12,12 +12,12 @@ const (
 )
 
 func newScore() *engine.Element {
-	score := &element{active: true, tag: "score", z: 99}
-	score.addComponent(newTextRenderer(
-		&vector{x: (screenWidth - 70), y: 15},
+	score := &engine.Element{Active: true, Tag: "score", Z: 99}
+	score.AddComponent(engine.NewTextRenderer(
+		&engine.Vector{X: (screenWidth - 70), Y: 15},
 		scoreFontSize,
 		sdl.Color{R: 255, G: 255, B: 255}))
-	score.addComponent(newScoreCounter(score))
+	score.AddComponent(newScoreCounter(score))
 	return score
 }
 
@@ -33,14 +33,14 @@ func newScoreCounter(parent *engine.Element) *scoreCounter {
 	}
 }
 
-func (context *scoreCounter) onUpdate() error {
-	context.parent.getComponent(&textRenderer{}).(*textRenderer).newValue = fmt.Sprintf("%03d", context.currentValue)
+func (context *scoreCounter) OnUpdate() error {
+	context.parent.GetComponent(&engine.TextRenderer{}).(*engine.TextRenderer).SetNewText(fmt.Sprintf("%03d", context.currentValue))
 	return nil
 }
-func (context *scoreCounter) onDraw(renderer *sdl.Renderer) error {
+func (context *scoreCounter) OnDraw(renderer *sdl.Renderer) error {
 	return nil
 }
-func (context *scoreCounter) onCollision(other *engine.Element) error {
+func (context *scoreCounter) OnCollision(other *engine.Element) error {
 	return nil
 }
 

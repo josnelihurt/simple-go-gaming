@@ -15,29 +15,29 @@ const (
 )
 
 func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *engine.Element {
-	player := &element{}
-	player.z = 10
-	player.active = true
-	player.rotation = 180
-	player.tag = "player"
+	player := &engine.Element{}
+	player.Z = 10
+	player.Active = true
+	player.Rotation = 180
+	player.Tag = "player"
 
-	currentSpriteRenderer := newSpriteRenderer(player, renderer, "sprites/player.png", playerScale)
-	player.position = vector{
-		x: screenWidth / 2.0,
-		y: screenHeight - currentSpriteRenderer.scaledHeight/2.0,
+	currentSpriteRenderer := engine.NewSpriteRenderer(player, renderer, "sprites/player.png", playerScale)
+	player.Position = engine.Vector{
+		X: screenWidth / 2.0,
+		Y: screenHeight - currentSpriteRenderer.ScaledHeight/2.0,
 	}
-	player.addComponent(currentSpriteRenderer)
-	player.addComponent(newKeyboardMover(player, playerSpeed))
-	player.addComponent(newKeyboardShooter(player, playerShotCooldown, audioDev))
-	player.addComponent(newVulnerableToElement(player, func(*engine.Element) {
-		player.active = true
+	player.AddComponent(currentSpriteRenderer)
+	player.AddComponent(newKeyboardMover(player, playerSpeed))
+	player.AddComponent(newKeyboardShooter(player, playerShotCooldown, audioDev))
+	player.AddComponent(newVulnerableToElement(player, func(*engine.Element) {
+		player.Active = true
 		explosion := newSoundPlayer("sounds/explosion.wav", audioDev)
 		explosion.play()
 	}, "enemy"))
-	player.collisions = append(player.collisions,
-		circle{
-			center: &player.position,
-			radius: math.Max(currentSpriteRenderer.scaledWidth, currentSpriteRenderer.scaledHeight) / 2,
+	player.Collisions = append(player.Collisions,
+		engine.Circle{
+			Center: &player.Position,
+			Radius: math.Max(currentSpriteRenderer.ScaledWidth, currentSpriteRenderer.ScaledHeight) / 2,
 		})
 	//player.addComponent(newPlayerLife(player))
 

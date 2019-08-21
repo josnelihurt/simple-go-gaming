@@ -14,9 +14,9 @@ const (
 
 func newBackground(renderer *sdl.Renderer) *engine.Element {
 	background := &engine.Element{
-		active: true,
+		Active: true,
 	}
-	background.addComponent(newBackgroundMover(renderer))
+	background.AddComponent(newBackgroundMover(renderer))
 	return background
 }
 
@@ -29,7 +29,7 @@ type backgroundMover struct {
 }
 
 func newBackgroundMover(renderer *sdl.Renderer) *backgroundMover {
-	texture := engine.textureFromFile(renderer, "sprites/background_space.png")
+	texture := engine.TextureFromFile(renderer, "sprites/background_space.png")
 	_, _, width, height, err := texture.Query()
 	if err != nil {
 		panic(fmt.Errorf("querying texture:%v", err))
@@ -40,7 +40,7 @@ func newBackgroundMover(renderer *sdl.Renderer) *backgroundMover {
 		bitmapWidth:  width,
 	}
 }
-func (context *backgroundMover) onUpdate() error {
+func (context *backgroundMover) OnUpdate() error {
 	context.currentY += backgroundSpeed * delta
 
 	if int32(context.currentY) >= context.bitmapHeight {
@@ -48,7 +48,7 @@ func (context *backgroundMover) onUpdate() error {
 	}
 	return nil
 }
-func (context *backgroundMover) onDraw(renderer *sdl.Renderer) error {
+func (context *backgroundMover) OnDraw(renderer *sdl.Renderer) error {
 	x := 0
 	y := context.currentY
 	remainingY := context.bitmapHeight - int32(y)
@@ -70,6 +70,6 @@ func (context *backgroundMover) onDraw(renderer *sdl.Renderer) error {
 
 	return nil
 }
-func (context *backgroundMover) onCollision(other *engine.Element) error {
+func (context *backgroundMover) OnCollision(other *engine.Element) error {
 	return nil
 }

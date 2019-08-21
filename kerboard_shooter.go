@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/veandco/go-sdl2/sdl"
 	"github.com/josnelihurt/simple-go-gaming/engine"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 type keyboardShooter struct {
@@ -22,7 +22,7 @@ func newKeyboardShooter(parent *engine.Element, cooldown time.Duration, audioDev
 		player:   newSoundPlayer("sounds/NFF-laser.wav", audioDev),
 	}
 }
-func (context *keyboardShooter) onUpdate() error {
+func (context *keyboardShooter) OnUpdate() error {
 	keys := sdl.GetKeyboardState()
 
 	parent := context.parent
@@ -30,25 +30,25 @@ func (context *keyboardShooter) onUpdate() error {
 	if keys[sdl.SCANCODE_SPACE] == 1 {
 		if time.Since(context.lastShot) > context.cooldown {
 			context.player.play()
-			sprite := parent.getComponent(&spriteRenderer{}).(*spriteRenderer)
-			context.shoot(parent.position.x+23, parent.position.y-sprite.scaledHeight/2)
-			context.shoot(parent.position.x-23, parent.position.y-sprite.scaledHeight/2)
+			sprite := parent.GetComponent(&engine.SpriteRenderer{}).(*engine.SpriteRenderer)
+			context.shoot(parent.Position.X+23, parent.Position.Y-sprite.ScaledHeight/2)
+			context.shoot(parent.Position.X-23, parent.Position.Y-sprite.ScaledHeight/2)
 			context.lastShot = time.Now()
 		}
 	}
 	return nil
 }
-func (context *keyboardShooter) onDraw(enderer *sdl.Renderer) error {
+func (context *keyboardShooter) OnDraw(enderer *sdl.Renderer) error {
 	return nil
 }
 
-func (context *keyboardShooter) onCollision(other *engine.Element) error {
+func (context *keyboardShooter) OnCollision(other *engine.Element) error {
 	return nil
 }
 func (context *keyboardShooter) shoot(x, y float64) {
 	if currentBullet, ok := bulletFromPool(); ok {
-		currentBullet.active = true
-		currentBullet.position.x = x
-		currentBullet.position.y = y
+		currentBullet.Active = true
+		currentBullet.Position.X = x
+		currentBullet.Position.Y = y
 	}
 }

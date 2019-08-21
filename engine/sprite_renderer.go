@@ -11,7 +11,7 @@ type SpriteRenderer struct {
 	parent                       *Element
 	texture                      *sdl.Texture
 	originalWidth, orginalHeight float64
-	scaledWidth, scaledHeight    float64
+	ScaledWidth, ScaledHeight    float64
 }
 
 func TextureFromFile(renderer *sdl.Renderer, filename string) (texture *sdl.Texture) {
@@ -41,30 +41,30 @@ func NewSpriteRenderer(parent *Element, renderer *sdl.Renderer, filename string,
 		texture:       texture,
 		originalWidth: float64(width),
 		orginalHeight: float64(height),
-		scaledWidth:   float64(width) * scale,
-		scaledHeight:  float64(height) * scale,
+		ScaledWidth:   float64(width) * scale,
+		ScaledHeight:  float64(height) * scale,
 	}
 
 	//logger <- fmt.Sprintln("new spriteRenderer:", result)
 
 	return result
 }
-func (context *SpriteRenderer) onDraw(renderer *sdl.Renderer) error {
+func (context *SpriteRenderer) OnDraw(renderer *sdl.Renderer) error {
 	// Converting coordinates to top left of sprite
-	x := context.parent.position.x - context.scaledWidth/2.0
-	y := context.parent.position.y - context.scaledHeight/2.0
+	x := context.parent.Position.X - context.ScaledWidth/2.0
+	y := context.parent.Position.Y - context.ScaledHeight/2.0
 
 	renderer.CopyEx(context.texture,
 		&sdl.Rect{X: 0, Y: 0, W: int32(context.originalWidth), H: int32(context.orginalHeight)},
-		&sdl.Rect{X: int32(x), Y: int32(y), W: int32(context.scaledWidth), H: int32(context.scaledHeight)},
-		context.parent.rotation,
-		&sdl.Point{X: int32(context.scaledWidth / 2.0), Y: int32(context.scaledHeight / 2.0)},
+		&sdl.Rect{X: int32(x), Y: int32(y), W: int32(context.ScaledWidth), H: int32(context.ScaledHeight)},
+		context.parent.Rotation,
+		&sdl.Point{X: int32(context.ScaledWidth / 2.0), Y: int32(context.ScaledHeight / 2.0)},
 		sdl.FLIP_NONE)
 	return nil
 }
-func (context *SpriteRenderer) onUpdate() error {
+func (context *SpriteRenderer) OnUpdate() error {
 	return nil
 }
-func (context *SpriteRenderer) onCollision(other *Element) error {
+func (context *SpriteRenderer) OnCollision(other *Element) error {
 	return nil
 }
