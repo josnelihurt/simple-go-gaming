@@ -42,9 +42,8 @@ func (context *scoreRenderer) increase() {
 }
 func (context *scoreRenderer) onDraw(renderer *sdl.Renderer) error {
 	if context.currenValue != context.newValue {
-		logger <- fmt.Sprintf("update texture to:%v", context.newValue)
 
-		surface, err := context.font.RenderUTF8Solid(fmt.Sprintf("%03d", context.newValue), context.textColor)
+		surface, err := context.font.RenderUTF8Solid(fmt.Sprintf("Score : %03d", context.newValue), context.textColor)
 		if err != nil {
 			return fmt.Errorf("creating surface from font %v", err)
 		}

@@ -17,20 +17,19 @@ type bullet struct {
 	score   *scoreRenderer
 }
 
-func newBullet(renderer *sdl.Renderer, scoreRenderer *scoreRenderer) *element {
+func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *element {
 	bullet := &element{}
 	bullet.z = 10
 
 	sr := newSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale)
 	bullet.addCompoenent(sr)
 
-	mover := newBulletMover(bullet, bulletSpeed)
+	mover := newBulletMover(bullet, bulletSpeed, onCollisionCallback)
 	bullet.addCompoenent(mover)
-	bullet.addCompoenent(scoreRenderer)
 
 	bullet.collisions = append(bullet.collisions,
 		circle{
-			center: bullet.position,
+			center: &bullet.position,
 			radius: 5,
 		})
 
@@ -43,9 +42,9 @@ func newBullet(renderer *sdl.Renderer, scoreRenderer *scoreRenderer) *element {
 
 var bulletPool []*element
 
-func initBulletPool(renderer *sdl.Renderer, scoreRenderer *scoreRenderer) []*element {
+func initBulletPool(renderer *sdl.Renderer, onCollisionCallback func()) []*element {
 	for i := 0; i < 30; i++ {
-		b := newBullet(renderer, scoreRenderer)
+		b := newBullet(renderer, onCollisionCallback)
 		bulletPool = append(bulletPool, b)
 	}
 	return bulletPool

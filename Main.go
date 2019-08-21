@@ -48,18 +48,44 @@ func createRenderer() (*sdl.Renderer, *sdl.Window, error) {
 	}
 	return renderer, window, nil
 }
-func loadElements(elementPool *elementPool, renderer *sdl.Renderer) {
+func loadElements(elementPool *elementPool, renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) {
 	scoreRenderer := newScoreRenderer()
 	score := &element{active: true}
 	score.addCompoenent(scoreRenderer)
 	score.z = 10
 	elementPool.insertElement(score)
-	elementPool.insertElement(newPlayer(renderer))
-	elementPool.insertSlice(initBulletPool(renderer, scoreRenderer))
-	elementPool.insertSlice(createEnemySwarm(renderer))
+	elementPool.insertElement(newPlayer(renderer, audioDev))
+	elementPool.insertSlice(initBulletPool(renderer, func() {
+		scoreRenderer.increase()
+	}))
+	elementPool.insertSlice(createEnemySwarm(renderer, func() {
+		for _, currentEnemy := range elementPool.getElementsByTag("enemy") {
+			if currentEnemy.active == true {
+				currentEnemyMover := currentEnemy.getComponent(&enemyMover{})
+				currentEnemyMover.(*enemyMover).active = true
+				break
+			}
+		}
+
+	}))
 	elementPool.insertElement(newBackground(renderer))
 }
-
+func openAudioDevice() sdl.AudioDeviceID {
+	currenAudioDriver := sdl.GetCurrentAudioDriver()
+	logger <- currenAudioDriver
+	soundInfo := &sdl.AudioSpec{
+		Freq:     44100,
+		Format:   32784,
+		Channels: 2,
+		Silence:  0,
+		Samples:  4096,
+	}
+	dev, err := sdl.OpenAudioDevice("", false, soundInfo, nil, 0)
+	if err != nil {
+		logger <- fmt.Sprintf("error opeing audio dev:%v", err)
+	}
+	return dev
+}
 func main() {
 	logger = make(chan string, 1024)
 	go doLog(logger)
@@ -71,15 +97,13 @@ func main() {
 	if err != nil {
 		logger <- "unable to create renderer"
 	}
-
-	elementPool := newElementPool()
-	loadElements(&elementPool, renderer)
-	for _, currentElement := range elementPool.elements {
-		logger <- fmt.Sprintf("Element :%v", currentElement)
-	}
-
 	defer window.Destroy()
 	defer renderer.Destroy()
+	audioDev := openAudioDevice()
+	defer sdl.CloseAudioDevice(audioDev)
+
+	elementPool := newElementPool()
+	loadElements(&elementPool, renderer, audioDev)
 
 	for {
 		frameStartTimer := time.Now()
