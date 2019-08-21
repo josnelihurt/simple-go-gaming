@@ -7,9 +7,9 @@ import (
 
 var bulletPool []*engine.Element
 
-func initBulletPool(renderer *sdl.Renderer, onCollisionCallback func()) []*engine.Element {
+func initBulletPool(renderer *sdl.Renderer) []*engine.Element {
 	for i := 0; i < 30; i++ {
-		b := newBullet(renderer, onCollisionCallback)
+		b := newBullet(renderer)
 		bulletPool = append(bulletPool, b)
 	}
 	return bulletPool

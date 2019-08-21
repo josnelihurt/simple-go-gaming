@@ -8,6 +8,9 @@ type Circle struct {
 	Radius float64
 }
 type Message struct {
-	Code int
-	Data string
+	Sender              *Element
+	RelatedTo           []*Element
+	Code                int
+	Data                string
+	SendToOtherElements bool
 }

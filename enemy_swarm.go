@@ -6,7 +6,7 @@ import (
 	"github.com/josnelihurt/simple-go-gaming/engine"
 )
 
-func createEnemySwarm(renderer *sdl.Renderer, onEnemyDistroyed func()) (swarm []*engine.Element) {
+func createEnemySwarm(renderer *sdl.Renderer) (swarm []*engine.Element) {
 	const rows = 3
 	const colums = 6
 	for i := 0; i < colums; i++ {
@@ -14,7 +14,7 @@ func createEnemySwarm(renderer *sdl.Renderer, onEnemyDistroyed func()) (swarm []
 			x := (float64(i)/colums)*screenWidth + (basicEnemySize / 2.0)
 			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0) + 50
 
-			enemy := newBasicEnemy(renderer, engine.Vector{X: x, Y: y}, onEnemyDistroyed)
+			enemy := newBasicEnemy(renderer, engine.Vector{X: x, Y: y})
 			enemy.Tag = "enemy"
 			swarm = append(swarm, enemy)
 		}
