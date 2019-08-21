@@ -3,7 +3,7 @@ package main
 import "math"
 
 type circle struct {
-	center vector
+	center *vector
 	radius float64
 }
 

@@ -36,4 +36,5 @@ func loadResources() {
 	unPackFileFromAsset("sprites", "player.png")
 	unPackFileFromAsset("sprites", "background_space.png")
 	unPackFileFromAsset("sounds", "NFF-laser.wav")
+	unPackFileFromAsset("sounds", "explosion.wav")
 }

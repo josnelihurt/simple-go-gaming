@@ -7,6 +7,11 @@ import (
 )
 
 func inputHandler() (continueFlag bool) {
+
+	keys := sdl.GetKeyboardState()
+	if keys[sdl.SCANCODE_ESCAPE] == 1 {
+		return false
+	}
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch event.(type) {
 		case *sdl.QuitEvent:
@@ -14,8 +19,6 @@ func inputHandler() (continueFlag bool) {
 			return false
 		}
 	}
-	return true
-}
-func gameLoop(renderer *sdl.Renderer) (continueFlag bool) {
+
 	return true
 }

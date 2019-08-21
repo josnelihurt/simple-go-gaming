@@ -7,12 +7,18 @@ type enemyMover struct {
 	parent *element
 }
 
-func newEnemyMover() *enemyMover {
-	return &enemyMover{}
+func newEnemyMover(parent *element) *enemyMover {
+	return &enemyMover{
+		active: false,
+		parent: parent,
+	}
 }
 func (context *enemyMover) onUpdate() error {
+	if context.parent.position.y >= screenHeight {
+		context.parent.active = false
+	}
 	if context.active {
-		context.parent.position.y -= enemySpeed * delta
+		context.parent.position.y += enemySpeed * delta
 	}
 	return nil
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math"
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
@@ -12,11 +13,12 @@ const (
 	playerScale        = 0.7
 )
 
-func newPlayer(renderer *sdl.Renderer) *element {
+func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *element {
 	player := &element{}
 	player.z = 10
 	player.active = true
 	player.rotation = 180
+	player.tag = "player"
 
 	currentSpriteRenderer := newSpriteRenderer(player, renderer, "sprites/player.png", playerScale)
 	player.position = vector{
@@ -24,12 +26,19 @@ func newPlayer(renderer *sdl.Renderer) *element {
 		y: screenHeight - currentSpriteRenderer.scaledHeight/2.0,
 	}
 	player.addCompoenent(currentSpriteRenderer)
-
-	mover := newKeyboardMover(player, playerSpeed)
-	player.addCompoenent(mover)
-
-	shooter := newKeyboardShooter(player, playerShotCooldown)
-	player.addCompoenent(shooter)
+	player.addCompoenent(newKeyboardMover(player, playerSpeed))
+	player.addCompoenent(newKeyboardShooter(player, playerShotCooldown, audioDev))
+	player.addCompoenent(newVulnerableToElement(player, func(*element) {
+		player.active = true
+		explosion := newSoundPlayer("sounds/explosion.wav", audioDev)
+		explosion.play()
+	}, "enemy"))
+	player.collisions = append(player.collisions,
+		circle{
+			center: &player.position,
+			radius: math.Max(currentSpriteRenderer.scaledWidth, currentSpriteRenderer.scaledHeight) / 2,
+		})
+	//player.addCompoenent(newPlayerLife(player))
 
 	return player
 }

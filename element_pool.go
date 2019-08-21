@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"sort"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
+
 type elementPool struct {
 	elements []*element
 }
@@ -30,6 +32,15 @@ func (context *elementPool) insertSlice(newChunk []*element) {
 	for _, item := range newChunk {
 		context.insertElement(item)
 	}
+}
+func (context *elementPool) getElementsByTag(tag string) []*element {
+	var elements []*element
+	for _, currentElement := range context.elements {
+		if currentElement.tag == tag {
+			elements = append(elements, currentElement)
+		}
+	}
+	return elements
 }
 
 func (context *elementPool) updateElements(renderer *sdl.Renderer) {

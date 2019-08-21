@@ -5,14 +5,16 @@ import (
 )
 
 type bulletMover struct {
-	parent *element
-	speed  float64
+	parent              *element
+	speed               float64
+	onCollisionCallback func()
 }
 
-func newBulletMover(parent *element, speed float64) *bulletMover {
+func newBulletMover(parent *element, speed float64, onCollisionCallback func()) *bulletMover {
 	return &bulletMover{
-		parent: parent,
-		speed:  speed,
+		parent:              parent,
+		speed:               speed,
+		onCollisionCallback: onCollisionCallback,
 	}
 }
 
@@ -24,8 +26,6 @@ func (context *bulletMover) onUpdate() error {
 		parent.position.y < 0 {
 		parent.active = false
 	}
-
-	context.parent.collisions[0].center = parent.position
 
 	return nil
 }
@@ -39,7 +39,7 @@ func (context *bulletMover) onCollision(other *element) error {
 		return nil
 	}
 	context.parent.active = false
-	context.parent.getComponent(&scoreRenderer{}).(*scoreRenderer).increase()
+	context.onCollisionCallback()
 	//logger <- fmt.Sprintf("bullet has crashed with %v :", other)
 	return nil
 }
