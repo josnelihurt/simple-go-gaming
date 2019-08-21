@@ -2,6 +2,7 @@ package engine
 
 import "math"
 
+/// Circle describes a circle
 type Circle struct {
 	Center *Vector
 	Radius float64
