@@ -44,3 +44,6 @@ func (context *bulletMover) OnCollision(other *engine.Element) error {
 	//logger <- fmt.Sprintf("bullet has crashed with %v :", other)
 	return nil
 }
+func (context *bulletMover) OnMessage(message *engine.Message) error {
+	return nil
+}

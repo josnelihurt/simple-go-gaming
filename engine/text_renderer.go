@@ -20,7 +20,7 @@ type TextRenderer struct {
 }
 
 func NewTextRenderer(position *Vector, fontSize int, textColor sdl.Color) *TextRenderer {
-	font, err := LoadFont(fontSize)
+	font, err := util.LoadFont(fontSize)
 	if err != nil {
 		util.Logger <- fmt.Sprintf("loading font ttf:%v", err)
 		panic(err)
@@ -66,5 +66,8 @@ func (context *TextRenderer) OnUpdate() error {
 	return nil
 }
 func (context *TextRenderer) OnCollision(other *Element) error {
+	return nil
+}
+func (context *TextRenderer) OnMessage(message *Message) error {
 	return nil
 }

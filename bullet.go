@@ -39,22 +39,3 @@ func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *engine.Eleme
 
 	return bullet
 }
-
-var bulletPool []*engine.Element
-
-func initBulletPool(renderer *sdl.Renderer, onCollisionCallback func()) []*engine.Element {
-	for i := 0; i < 30; i++ {
-		b := newBullet(renderer, onCollisionCallback)
-		bulletPool = append(bulletPool, b)
-	}
-	return bulletPool
-}
-
-func bulletFromPool() (*engine.Element, bool) {
-	for _, b := range bulletPool {
-		if !b.Active {
-			return b, true
-		}
-	}
-	return nil, false
-}

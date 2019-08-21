@@ -21,7 +21,7 @@ func newBasicEnemy(renderer *sdl.Renderer, position engine.Vector, onDistroyed f
 	basicEnemy.Active = true
 
 	basicEnemy.AddComponent(engine.NewSpriteRenderer(basicEnemy, renderer, "sprites/basic_enemy.png", enemyScale))
-	basicEnemy.AddComponent(newVulnerableToElement(basicEnemy, func(origin *engine.Element) {
+	basicEnemy.AddComponent(engine.NewVulnerableToElement(basicEnemy, func(origin *engine.Element) {
 		if origin.Tag == "bullet" {
 			onDistroyed()
 		}
@@ -34,19 +34,4 @@ func newBasicEnemy(renderer *sdl.Renderer, position engine.Vector, onDistroyed f
 			Radius: basicEnemySize / 2,
 		})
 	return basicEnemy
-}
-func createEnemySwarm(renderer *sdl.Renderer, onEnemyDistroyed func()) (swarm []*engine.Element) {
-	const rows = 3
-	const colums = 6
-	for i := 0; i < colums; i++ {
-		for j := 0; j < rows; j++ {
-			x := (float64(i)/colums)*screenWidth + (basicEnemySize / 2.0)
-			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0) + 50
-
-			enemy := newBasicEnemy(renderer, engine.Vector{X: x, Y: y}, onEnemyDistroyed)
-			enemy.Tag = "enemy"
-			swarm = append(swarm, enemy)
-		}
-	}
-	return swarm
 }

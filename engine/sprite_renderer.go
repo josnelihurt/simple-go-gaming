@@ -68,3 +68,6 @@ func (context *SpriteRenderer) OnUpdate() error {
 func (context *SpriteRenderer) OnCollision(other *Element) error {
 	return nil
 }
+func (context *SpriteRenderer) OnMessage(message *Message) error {
+	return nil
+}
