@@ -37,7 +37,6 @@ func (context *TextRenderer) SetNewText(text string) {
 }
 func (context *TextRenderer) OnDraw(renderer *sdl.Renderer) error {
 	if context.currenValue != context.newValue {
-		util.Logger <- fmt.Sprintf("n:%v,o:%v", context.newValue, context.currenValue)
 		surface, err := context.font.RenderUTF8Solid(context.newValue, context.textColor)
 		if err != nil {
 			return fmt.Errorf("creating surface from font %v", err)

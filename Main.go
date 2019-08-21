@@ -7,7 +7,6 @@ import (
 	"github.com/josnelihurt/simple-go-gaming/engine"
 	"github.com/josnelihurt/simple-go-gaming/engine/util"
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/veandco/go-sdl2/ttf"
 )
 
 const (
@@ -18,32 +17,6 @@ const (
 
 var delta float64
 
-func createRenderer() (*sdl.Renderer, *sdl.Window, error) {
-	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		util.Logger <- fmt.Sprintln("initializing SDL:", err)
-		panic(err)
-	}
-	window, err := sdl.CreateWindow(
-		"Demo game 1",
-		sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		screenWidth, screenHeight,
-		sdl.WINDOW_SHOWN)
-	if err != nil {
-		util.Logger <- fmt.Sprintln("initializing window:", err)
-		return nil, nil, err
-	}
-	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
-	if err != nil {
-		util.Logger <- fmt.Sprintf("inititalizing renderer:%v", err)
-		return nil, nil, err
-	}
-
-	if err := ttf.Init(); err != nil {
-		util.Logger <- fmt.Sprintf("initializing ttf:%v", err)
-		return nil, nil, err
-	}
-	return renderer, window, nil
-}
 func loadElements(elementPool *engine.ElementPool, renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) {
 	elementPool.InsertElement(newScore())
 	elementPool.InsertElement(newPlayer(renderer, audioDev))
@@ -62,22 +35,7 @@ func loadElements(elementPool *engine.ElementPool, renderer *sdl.Renderer, audio
 	}))
 	elementPool.InsertElement(newBackground(renderer))
 }
-func openAudioDevice() sdl.AudioDeviceID {
-	currenAudioDriver := sdl.GetCurrentAudioDriver()
-	util.Logger <- currenAudioDriver
-	soundInfo := &sdl.AudioSpec{
-		Freq:     44100,
-		Format:   32784,
-		Channels: 2,
-		Silence:  0,
-		Samples:  4096,
-	}
-	dev, err := sdl.OpenAudioDevice("", false, soundInfo, nil, 0)
-	if err != nil {
-		util.Logger <- fmt.Sprintf("error opeing audio dev:%v", err)
-	}
-	return dev
-}
+
 func main() {
 	util.Logger = make(chan string, 1024)
 	go util.DoLog(util.Logger)
@@ -85,17 +43,16 @@ func main() {
 	defer close(util.Logger)
 
 	loadResources()
-	renderer, window, err := createRenderer()
+	engineComponents, err := engine.NewSDLComponents(screenWidth, screenHeight, "simple-game")
 	if err != nil {
-		util.Logger <- "unable to create renderer"
+		util.Logger <- "Unable to start"
+		return
 	}
-	defer window.Destroy()
-	defer renderer.Destroy()
-	audioDev := openAudioDevice()
-	defer sdl.CloseAudioDevice(audioDev)
+
+	defer engineComponents.Release()
 
 	elementPool := engine.NewElementPool()
-	loadElements(&elementPool, renderer, audioDev)
+	loadElements(&elementPool, engineComponents.Renderer, engineComponents.AudioDev)
 
 	for {
 		frameStartTimer := time.Now()
@@ -103,14 +60,14 @@ func main() {
 			util.Logger <- fmt.Sprintf("exiting gameLoop:")
 			return
 		}
-		renderer.SetDrawColor(255, 255, 0, 0)
-		renderer.Clear()
-		elementPool.UpdateElements(renderer)
+		engineComponents.Renderer.SetDrawColor(255, 255, 0, 0)
+		engineComponents.Renderer.Clear()
+		elementPool.UpdateElements(engineComponents.Renderer)
 		if err := engine.CheckColisions(&elementPool); err != nil {
 			util.Logger <- fmt.Sprintf("checking collisions:%v", err)
 		}
 
-		renderer.Present()
+		engineComponents.Renderer.Present()
 		delta = time.Since(frameStartTimer).Seconds() * targetTicksPerSecond
 	}
 }

@@ -7,11 +7,6 @@ import (
 	"github.com/josnelihurt/simple-go-gaming/engine/util"
 )
 
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
 func unPackFileFromAsset(folder, filename string) {
 	os.Mkdir(folder, os.ModePerm)
 	out := fmt.Sprintf("%v/%v", folder, filename)
