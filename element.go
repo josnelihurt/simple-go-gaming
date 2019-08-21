@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 type vector struct {
@@ -81,4 +82,12 @@ func (context *element) collision(other *element) error {
 		}
 	}
 	return nil
+}
+
+func loadFont(fontSize int) (font *ttf.Font, err error) {
+	font, err = ttf.OpenFont("fonts/Starjout.ttf", fontSize)
+	if err != nil {
+		return nil, fmt.Errorf("initializing font:%v", err)
+	}
+	return font, nil
 }

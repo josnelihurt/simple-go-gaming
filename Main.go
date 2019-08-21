@@ -12,6 +12,7 @@ const (
 	screenWidth          = 720
 	screenHeight         = 800
 	targetTicksPerSecond = 60
+	scoreFontSize        = 22
 )
 
 var logger chan string
@@ -49,14 +50,17 @@ func createRenderer() (*sdl.Renderer, *sdl.Window, error) {
 	return renderer, window, nil
 }
 func loadElements(elementPool *elementPool, renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) {
-	scoreRenderer := newScoreRenderer()
+	scoreRenderer := newTextRenderer(
+		&vector{x: (screenWidth - 30), y: 10},
+		scoreFontSize,
+		sdl.Color{R: 255, G: 255, B: 255})
 	score := &element{active: true}
 	score.addCompoenent(scoreRenderer)
 	score.z = 10
 	elementPool.insertElement(score)
 	elementPool.insertElement(newPlayer(renderer, audioDev))
 	elementPool.insertSlice(initBulletPool(renderer, func() {
-		scoreRenderer.increase()
+		scoreRenderer.newValue = "Hi"
 	}))
 	elementPool.insertSlice(createEnemySwarm(renderer, func() {
 		for _, currentEnemy := range elementPool.getElementsByTag("enemy") {
