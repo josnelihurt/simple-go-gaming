@@ -16,16 +16,26 @@ const (
 
 var delta float64
 
+func bindMessage(source *engine.Element, destination *engine.Element) {
+	source.RegisterEmmiterCallback(func(message *engine.Message) error {
+		destination.BroadcastMessageToComponents(message)
+		return nil
+	})
+}
+func bindMessages(sources []*engine.Element, destination *engine.Element) {
+	for _, source := range sources {
+		bindMessage(source, destination)
+	}
+}
 func createElements(components *engine.SDLComponents) (elements []*engine.Element) {
 	score := newScore()
 	player := newPlayer(components.Renderer, components.AudioDev)
 	background := newBackground(components.Renderer)
-	bulletPool := initBulletPool(components.Renderer, func() {
-		score.GetComponent(&scoreCounter{}).(*scoreCounter).increase()
-	})
-	enemySwarm := createEnemySwarm(components.Renderer, func() {
+	bulletPool := initBulletPool(components.Renderer)
+	bindMessages(bulletPool, player)
+	enemySwarm := createEnemySwarm(components.Renderer)
+	bindMessages(enemySwarm, score)
 
-	})
 	elements = append(elements, score, player, background)
 	elements = append(elements, bulletPool...)
 	elements = append(elements, enemySwarm...)

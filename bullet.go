@@ -17,15 +17,13 @@ type bullet struct {
 	angle   float64
 }
 
-func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *engine.Element {
+func newBullet(renderer *sdl.Renderer) *engine.Element {
 	bullet := &engine.Element{}
 	bullet.Z = 10
 
-	sr := engine.NewSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale)
-	bullet.AddComponent(sr)
-
-	mover := newBulletMover(bullet, bulletSpeed, onCollisionCallback)
-	bullet.AddComponent(mover)
+	bullet.AddComponent(engine.NewSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale))
+	bullet.AddComponent(newBulletMover(bullet, bulletSpeed))
+	bullet.AddComponent(engine.NewCollisionDetecter(bullet, ""))
 
 	bullet.Collisions = append(bullet.Collisions,
 		engine.Circle{
@@ -34,7 +32,7 @@ func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *engine.Eleme
 		})
 
 	bullet.Active = false
-	//bullet.rotation = 0.0
+	bullet.Rotation = 0.0
 	bullet.Tag = "bullet"
 
 	return bullet

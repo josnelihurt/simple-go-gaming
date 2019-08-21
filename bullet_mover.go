@@ -6,16 +6,14 @@ import (
 )
 
 type bulletMover struct {
-	parent              *engine.Element
-	speed               float64
-	onCollisionCallback func()
+	parent *engine.Element
+	speed  float64
 }
 
-func newBulletMover(parent *engine.Element, speed float64, onCollisionCallback func()) *bulletMover {
+func newBulletMover(parent *engine.Element, speed float64) *bulletMover {
 	return &bulletMover{
-		parent:              parent,
-		speed:               speed,
-		onCollisionCallback: onCollisionCallback,
+		parent: parent,
+		speed:  speed,
 	}
 }
 
@@ -34,14 +32,8 @@ func (context *bulletMover) OnUpdate() error {
 func (context *bulletMover) OnDraw(renderer *sdl.Renderer) error {
 	return nil
 }
-
 func (context *bulletMover) OnCollision(other *engine.Element) error {
-	if other.Tag == "bullet" {
-		return nil
-	}
 	context.parent.Active = false
-	context.onCollisionCallback()
-	//logger <- fmt.Sprintf("bullet has crashed with %v :", other)
 	return nil
 }
 func (context *bulletMover) OnMessage(message *engine.Message) error {

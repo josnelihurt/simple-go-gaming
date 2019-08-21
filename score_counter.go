@@ -32,7 +32,3 @@ func (context *scoreCounter) OnCollision(other *engine.Element) error {
 func (context *scoreCounter) OnMessage(message *engine.Message) error {
 	return nil
 }
-
-func (context *scoreCounter) increase() {
-	context.currentValue++
-}

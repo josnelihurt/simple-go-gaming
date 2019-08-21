@@ -9,15 +9,33 @@ import (
 )
 
 type Element struct {
-	Position   Vector
-	Rotation   float64
-	Active     bool
-	Collisions []Circle
-	components []Component
-	Tag        string
-	Z          uint8
+	components     []Component
+	messageEmmiter func(*Message) error
+	Active         bool
+	Collisions     []Circle
+	Position       Vector
+	Rotation       float64
+	Tag            string
+	Z              uint8
 }
 
+func (context *Element) RegisterEmmiterCallback(callback func(*Message) error) {
+	context.messageEmmiter = callback
+}
+func (context *Element) BroadcastMessageToComponents(message *Message) error {
+	for _, currentComponent := range context.components {
+		if err := currentComponent.OnMessage(message); err != nil {
+			return err
+		}
+	}
+	if context.messageEmmiter != nil && message.SendToOtherElements {
+		if err := context.messageEmmiter(message); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
 func (context *Element) Draw(renderer *sdl.Renderer) error {
 	for _, currentComponent := range context.components {
 		if err := currentComponent.OnDraw(renderer); err != nil {

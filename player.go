@@ -29,21 +29,12 @@ func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *engine.Eleme
 	player.AddComponent(currentSpriteRenderer)
 	player.AddComponent(newKeyboardMover(player, playerSpeed))
 	player.AddComponent(newKeyboardShooter(player, playerShotCooldown, audioDev))
-	player.AddComponent(engine.NewVulnerableToElement(player, func(*engine.Element) {
-		player.Active = true
-		explosion := newSoundPlayer("sounds/explosion.wav", audioDev)
-		explosion.play()
-	}, "enemy"))
+	player.AddComponent(engine.NewCollisionDetecter(player, "enemy"))
 	player.Collisions = append(player.Collisions,
 		engine.Circle{
 			Center: &player.Position,
 			Radius: math.Max(currentSpriteRenderer.ScaledWidth, currentSpriteRenderer.ScaledHeight) / 2,
 		})
-	//player.addComponent(newPlayerLife(player))
 
 	return player
-}
-
-func init() {
-
 }
