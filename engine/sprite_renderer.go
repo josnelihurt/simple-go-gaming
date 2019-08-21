@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"fmt"
@@ -7,14 +7,14 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
-type spriteRenderer struct {
-	parent                       *element
+type SpriteRenderer struct {
+	parent                       *Element
 	texture                      *sdl.Texture
 	originalWidth, orginalHeight float64
 	scaledWidth, scaledHeight    float64
 }
 
-func textureFromFile(renderer *sdl.Renderer, filename string) (texture *sdl.Texture) {
+func TextureFromFile(renderer *sdl.Renderer, filename string) (texture *sdl.Texture) {
 	var image *sdl.Surface
 	var err error
 
@@ -30,13 +30,13 @@ func textureFromFile(renderer *sdl.Renderer, filename string) (texture *sdl.Text
 	}
 	return texture
 }
-func newSpriteRenderer(parent *element, renderer *sdl.Renderer, filename string, scale float64) *spriteRenderer {
-	texture := textureFromFile(renderer, filename)
+func NewSpriteRenderer(parent *Element, renderer *sdl.Renderer, filename string, scale float64) *SpriteRenderer {
+	texture := TextureFromFile(renderer, filename)
 	_, _, width, height, err := texture.Query()
 	if err != nil {
 		panic(fmt.Errorf("querying texture:%v", err))
 	}
-	result := &spriteRenderer{
+	result := &SpriteRenderer{
 		parent:        parent,
 		texture:       texture,
 		originalWidth: float64(width),
@@ -49,7 +49,7 @@ func newSpriteRenderer(parent *element, renderer *sdl.Renderer, filename string,
 
 	return result
 }
-func (context *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
+func (context *SpriteRenderer) onDraw(renderer *sdl.Renderer) error {
 	// Converting coordinates to top left of sprite
 	x := context.parent.position.x - context.scaledWidth/2.0
 	y := context.parent.position.y - context.scaledHeight/2.0
@@ -62,9 +62,9 @@ func (context *spriteRenderer) onDraw(renderer *sdl.Renderer) error {
 		sdl.FLIP_NONE)
 	return nil
 }
-func (context *spriteRenderer) onUpdate() error {
+func (context *SpriteRenderer) onUpdate() error {
 	return nil
 }
-func (context *spriteRenderer) onCollision(other *element) error {
+func (context *SpriteRenderer) onCollision(other *Element) error {
 	return nil
 }

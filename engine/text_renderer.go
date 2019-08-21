@@ -1,38 +1,40 @@
-package main
+package engine
 
 import (
 	"fmt"
 
+	"github.com/josnelihurt/simple-go-gaming/engine/util"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 )
 
-type textRenderer struct {
+type TextRenderer struct {
 	currenValue string
 	newValue    string
 	width       int32
 	height      int32
-	position    *vector
+	position    *Vector
 	texture     *sdl.Texture
 	font        *ttf.Font
 	textColor   sdl.Color
 }
 
-func newTextRenderer(position *vector, fontSize int, textColor sdl.Color) *textRenderer {
-	font, err := loadFont(fontSize)
+func NewTextRenderer(position *Vector, fontSize int, textColor sdl.Color) *TextRenderer {
+	font, err := LoadFont(fontSize)
 	if err != nil {
-		logger <- fmt.Sprintf("loading font ttf:%v", err)
+		util.Logger <- fmt.Sprintf("loading font ttf:%v", err)
 		panic(err)
 	}
 
-	return &textRenderer{
+	return &TextRenderer{
 		font:      font,
 		textColor: textColor,
 		position:  position,
 	}
 }
-func (context *textRenderer) onDraw(renderer *sdl.Renderer) error {
+func (context *TextRenderer) onDraw(renderer *sdl.Renderer) error {
 	if context.currenValue != context.newValue {
+		util.Logger <- fmt.Sprintf("n:%v,o:%v", context.newValue, context.currenValue)
 		surface, err := context.font.RenderUTF8Solid(context.newValue, context.textColor)
 		if err != nil {
 			return fmt.Errorf("creating surface from font %v", err)
@@ -58,9 +60,9 @@ func (context *textRenderer) onDraw(renderer *sdl.Renderer) error {
 		&sdl.Rect{X: int32(x), Y: int32(y), W: int32(context.width), H: int32(context.height)})
 	return nil
 }
-func (context *textRenderer) onUpdate() error {
+func (context *TextRenderer) onUpdate() error {
 	return nil
 }
-func (context *textRenderer) onCollision(other *element) error {
+func (context *TextRenderer) onCollision(other *Element) error {
 	return nil
 }

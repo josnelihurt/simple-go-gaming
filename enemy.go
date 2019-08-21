@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+
+	"github.com/josnelihurt/simple-go-gaming/engine"
 )
 
 const (
@@ -10,7 +12,7 @@ const (
 	enemySpeed     = 6.0
 )
 
-func newBasicEnemy(renderer *sdl.Renderer, position vector, onDistroyed func()) *element {
+func newBasicEnemy(renderer *sdl.Renderer, position engine.Vector, onDistroyed func()) *engine.Element {
 	basicEnemy := &element{}
 	basicEnemy.z = 10
 
@@ -18,13 +20,13 @@ func newBasicEnemy(renderer *sdl.Renderer, position vector, onDistroyed func()) 
 	basicEnemy.rotation = 0
 	basicEnemy.active = true
 
-	basicEnemy.addCompoenent(newSpriteRenderer(basicEnemy, renderer, "sprites/basic_enemy.png", enemyScale))
-	basicEnemy.addCompoenent(newVulnerableToElement(basicEnemy, func(origin *element) {
+	basicEnemy.addComponent(newSpriteRenderer(basicEnemy, renderer, "sprites/basic_enemy.png", enemyScale))
+	basicEnemy.addComponent(newVulnerableToElement(basicEnemy, func(origin *engine.Element) {
 		if origin.tag == "bullet" {
 			onDistroyed()
 		}
 	}, "bullet", "player"))
-	basicEnemy.addCompoenent(newEnemyMover(basicEnemy))
+	basicEnemy.addComponent(newEnemyMover(basicEnemy))
 
 	basicEnemy.collisions = append(basicEnemy.collisions,
 		circle{
@@ -33,7 +35,7 @@ func newBasicEnemy(renderer *sdl.Renderer, position vector, onDistroyed func()) 
 		})
 	return basicEnemy
 }
-func createEnemySwarm(renderer *sdl.Renderer, onEnemyDistroyed func()) (swarm []*element) {
+func createEnemySwarm(renderer *sdl.Renderer, onEnemyDistroyed func()) (swarm []*engine.Element) {
 	const rows = 3
 	const colums = 6
 	for i := 0; i < colums; i++ {

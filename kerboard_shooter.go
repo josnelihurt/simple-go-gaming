@@ -4,16 +4,17 @@ import (
 	"time"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/josnelihurt/simple-go-gaming/engine"
 )
 
 type keyboardShooter struct {
-	parent   *element
+	parent   *engine.Element
 	cooldown time.Duration
 	lastShot time.Time
 	player   soundPlayer
 }
 
-func newKeyboardShooter(parent *element, cooldown time.Duration, audioDev sdl.AudioDeviceID) *keyboardShooter {
+func newKeyboardShooter(parent *engine.Element, cooldown time.Duration, audioDev sdl.AudioDeviceID) *keyboardShooter {
 
 	return &keyboardShooter{
 		parent:   parent,
@@ -41,7 +42,7 @@ func (context *keyboardShooter) onDraw(enderer *sdl.Renderer) error {
 	return nil
 }
 
-func (context *keyboardShooter) onCollision(other *element) error {
+func (context *keyboardShooter) onCollision(other *engine.Element) error {
 	return nil
 }
 func (context *keyboardShooter) shoot(x, y float64) {

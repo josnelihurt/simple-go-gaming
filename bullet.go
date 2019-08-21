@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/josnelihurt/simple-go-gaming/engine"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -16,15 +17,15 @@ type bullet struct {
 	angle   float64
 }
 
-func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *element {
+func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *engine.Element {
 	bullet := &element{}
 	bullet.z = 10
 
 	sr := newSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale)
-	bullet.addCompoenent(sr)
+	bullet.addComponent(sr)
 
 	mover := newBulletMover(bullet, bulletSpeed, onCollisionCallback)
-	bullet.addCompoenent(mover)
+	bullet.addComponent(mover)
 
 	bullet.collisions = append(bullet.collisions,
 		circle{
@@ -39,9 +40,9 @@ func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *element {
 	return bullet
 }
 
-var bulletPool []*element
+var bulletPool []*engine.Element
 
-func initBulletPool(renderer *sdl.Renderer, onCollisionCallback func()) []*element {
+func initBulletPool(renderer *sdl.Renderer, onCollisionCallback func()) []*engine.Element {
 	for i := 0; i < 30; i++ {
 		b := newBullet(renderer, onCollisionCallback)
 		bulletPool = append(bulletPool, b)
@@ -49,7 +50,7 @@ func initBulletPool(renderer *sdl.Renderer, onCollisionCallback func()) []*eleme
 	return bulletPool
 }
 
-func bulletFromPool() (*element, bool) {
+func bulletFromPool() (*engine.Element, bool) {
 	for _, b := range bulletPool {
 		if !b.active {
 			return b, true
