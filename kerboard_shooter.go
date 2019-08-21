@@ -41,10 +41,13 @@ func (context *keyboardShooter) OnUpdate() error {
 func (context *keyboardShooter) OnDraw(enderer *sdl.Renderer) error {
 	return nil
 }
-
 func (context *keyboardShooter) OnCollision(other *engine.Element) error {
 	return nil
 }
+func (context *keyboardShooter) OnMessage(message *engine.Message) error {
+	return nil
+}
+
 func (context *keyboardShooter) shoot(x, y float64) {
 	if currentBullet, ok := bulletFromPool(); ok {
 		currentBullet.Active = true

@@ -29,7 +29,7 @@ func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *engine.Eleme
 	player.AddComponent(currentSpriteRenderer)
 	player.AddComponent(newKeyboardMover(player, playerSpeed))
 	player.AddComponent(newKeyboardShooter(player, playerShotCooldown, audioDev))
-	player.AddComponent(newVulnerableToElement(player, func(*engine.Element) {
+	player.AddComponent(engine.NewVulnerableToElement(player, func(*engine.Element) {
 		player.Active = true
 		explosion := newSoundPlayer("sounds/explosion.wav", audioDev)
 		explosion.play()

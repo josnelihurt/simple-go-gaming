@@ -3,20 +3,10 @@ package engine
 import (
 	"fmt"
 	"reflect"
+	"sort"
 
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/veandco/go-sdl2/ttf"
 )
-
-type Vector struct {
-	X, Y float64
-}
-
-type Component interface {
-	OnUpdate() error
-	OnDraw(renderer *sdl.Renderer) error
-	OnCollision(other *Element) error
-}
 
 type Element struct {
 	Position   Vector
@@ -26,15 +16,6 @@ type Element struct {
 	components []Component
 	Tag        string
 	Z          uint8
-}
-
-func (context *Element) RunOnAllComponents(callback func(Component, *sdl.Renderer) error, renderer *sdl.Renderer) error {
-	for _, currentComponent := range context.components {
-		if err := callback(currentComponent, renderer); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func (context *Element) Draw(renderer *sdl.Renderer) error {
@@ -83,11 +64,10 @@ func (context *Element) Collision(other *Element) error {
 	}
 	return nil
 }
-
-func LoadFont(fontSize int) (font *ttf.Font, err error) {
-	font, err = ttf.OpenFont("fonts/Starjout.ttf", fontSize)
-	if err != nil {
-		return nil, fmt.Errorf("initializing font:%v", err)
-	}
-	return font, nil
+func insertSort(data []*Element, el *Element) []*Element {
+	index := sort.Search(len(data), func(i int) bool { return data[i].Z > el.Z })
+	data = append(data, &Element{})
+	copy(data[index+1:], data[index:])
+	data[index] = el
+	return data
 }

@@ -32,3 +32,6 @@ func (context *enemyMover) OnDraw(renderer *sdl.Renderer) error {
 func (context *enemyMover) OnCollision(other *engine.Element) error {
 	return nil
 }
+func (context *enemyMover) OnMessage(message *engine.Message) error {
+	return nil
+}

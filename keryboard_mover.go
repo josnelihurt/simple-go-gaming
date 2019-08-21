@@ -50,3 +50,6 @@ func (context *keyboardMover) OnDraw(renderer *sdl.Renderer) error {
 func (context *keyboardMover) OnCollision(other *engine.Element) error {
 	return nil
 }
+func (context *keyboardMover) OnMessage(message *engine.Message) error {
+	return nil
+}
