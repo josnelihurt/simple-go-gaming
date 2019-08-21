@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/josnelihurt/simple-go-gaming/engine"
+	"github.com/josnelihurt/simple-go-gaming/engine/util"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 )
@@ -12,20 +14,13 @@ const (
 	screenWidth          = 720
 	screenHeight         = 800
 	targetTicksPerSecond = 60
-	scoreFontSize        = 22
 )
 
-var logger chan string
 var delta float64
 
-func doLog(input <-chan string) {
-	for line := range input {
-		fmt.Println(line)
-	}
-}
 func createRenderer() (*sdl.Renderer, *sdl.Window, error) {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		logger <- fmt.Sprintln("initializing SDL:", err)
+		util.Logger <- fmt.Sprintln("initializing SDL:", err)
 		panic(err)
 	}
 	window, err := sdl.CreateWindow(
@@ -34,33 +29,26 @@ func createRenderer() (*sdl.Renderer, *sdl.Window, error) {
 		screenWidth, screenHeight,
 		sdl.WINDOW_SHOWN)
 	if err != nil {
-		logger <- fmt.Sprintln("initializing window:", err)
+		util.Logger <- fmt.Sprintln("initializing window:", err)
 		return nil, nil, err
 	}
 	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
-		logger <- fmt.Sprintf("inititalizing renderer:%v", err)
+		util.Logger <- fmt.Sprintf("inititalizing renderer:%v", err)
 		return nil, nil, err
 	}
 
 	if err := ttf.Init(); err != nil {
-		logger <- fmt.Sprintf("initializing ttf:%v", err)
+		util.Logger <- fmt.Sprintf("initializing ttf:%v", err)
 		return nil, nil, err
 	}
 	return renderer, window, nil
 }
-func loadElements(elementPool *elementPool, renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) {
-	scoreRenderer := newTextRenderer(
-		&vector{x: (screenWidth - 30), y: 10},
-		scoreFontSize,
-		sdl.Color{R: 255, G: 255, B: 255})
-	score := &element{active: true}
-	score.addCompoenent(scoreRenderer)
-	score.z = 10
-	elementPool.insertElement(score)
-	elementPool.insertElement(newPlayer(renderer, audioDev))
-	elementPool.insertSlice(initBulletPool(renderer, func() {
-		scoreRenderer.newValue = "Hi"
+func loadElements(elementPool *engine.ElementPool, renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) {
+	elementPool.InsertElement(newScore())
+	elementPool.InsertElement(newPlayer(renderer, audioDev))
+	elementPool.InsertSlice(initBulletPool(renderer, func() {
+		elementPool.GetElementsByTag("score")[0].getComponent(&scoreCounter{}).(*scoreCounter).increase()
 	}))
 	elementPool.insertSlice(createEnemySwarm(renderer, func() {
 		for _, currentEnemy := range elementPool.getElementsByTag("enemy") {
@@ -72,11 +60,11 @@ func loadElements(elementPool *elementPool, renderer *sdl.Renderer, audioDev sdl
 		}
 
 	}))
-	elementPool.insertElement(newBackground(renderer))
+	elementPool.InsertElement(newBackground(renderer))
 }
 func openAudioDevice() sdl.AudioDeviceID {
 	currenAudioDriver := sdl.GetCurrentAudioDriver()
-	logger <- currenAudioDriver
+	util.Logger <- currenAudioDriver
 	soundInfo := &sdl.AudioSpec{
 		Freq:     44100,
 		Format:   32784,
@@ -86,20 +74,20 @@ func openAudioDevice() sdl.AudioDeviceID {
 	}
 	dev, err := sdl.OpenAudioDevice("", false, soundInfo, nil, 0)
 	if err != nil {
-		logger <- fmt.Sprintf("error opeing audio dev:%v", err)
+		util.Logger <- fmt.Sprintf("error opeing audio dev:%v", err)
 	}
 	return dev
 }
 func main() {
-	logger = make(chan string, 1024)
-	go doLog(logger)
-	logger <- "Starting up.."
-	defer close(logger)
+	util.Logger = make(chan string, 1024)
+	go util.DoLog(util.Logger)
+	util.Logger <- "Starting up.."
+	defer close(util.Logger)
 
 	loadResources()
 	renderer, window, err := createRenderer()
 	if err != nil {
-		logger <- "unable to create renderer"
+		util.Logger <- "unable to create renderer"
 	}
 	defer window.Destroy()
 	defer renderer.Destroy()
@@ -112,14 +100,14 @@ func main() {
 	for {
 		frameStartTimer := time.Now()
 		if continueFlag := inputHandler(); continueFlag == false {
-			logger <- fmt.Sprintf("exiting gameLoop:")
+			util.Logger <- fmt.Sprintf("exiting gameLoop:")
 			return
 		}
 		renderer.SetDrawColor(255, 255, 0, 0)
 		renderer.Clear()
-		elementPool.updateElements(renderer)
+		elementPool.UpdateElements(renderer)
 		if err := checkColisions(&elementPool); err != nil {
-			logger <- fmt.Sprintf("checking collisions:%v", err)
+			util.Logger <- fmt.Sprintf("checking collisions:%v", err)
 		}
 
 		renderer.Present()

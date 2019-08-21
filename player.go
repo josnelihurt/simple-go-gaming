@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/josnelihurt/simple-go-gaming/engine"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -13,7 +14,7 @@ const (
 	playerScale        = 0.7
 )
 
-func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *element {
+func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *engine.Element {
 	player := &element{}
 	player.z = 10
 	player.active = true
@@ -25,10 +26,10 @@ func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *element {
 		x: screenWidth / 2.0,
 		y: screenHeight - currentSpriteRenderer.scaledHeight/2.0,
 	}
-	player.addCompoenent(currentSpriteRenderer)
-	player.addCompoenent(newKeyboardMover(player, playerSpeed))
-	player.addCompoenent(newKeyboardShooter(player, playerShotCooldown, audioDev))
-	player.addCompoenent(newVulnerableToElement(player, func(*element) {
+	player.addComponent(currentSpriteRenderer)
+	player.addComponent(newKeyboardMover(player, playerSpeed))
+	player.addComponent(newKeyboardShooter(player, playerShotCooldown, audioDev))
+	player.addComponent(newVulnerableToElement(player, func(*engine.Element) {
 		player.active = true
 		explosion := newSoundPlayer("sounds/explosion.wav", audioDev)
 		explosion.play()
@@ -38,7 +39,11 @@ func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *element {
 			center: &player.position,
 			radius: math.Max(currentSpriteRenderer.scaledWidth, currentSpriteRenderer.scaledHeight) / 2,
 		})
-	//player.addCompoenent(newPlayerLife(player))
+	//player.addComponent(newPlayerLife(player))
 
 	return player
+}
+
+func init() {
+
 }

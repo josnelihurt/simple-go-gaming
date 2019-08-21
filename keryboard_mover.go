@@ -2,15 +2,16 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/josnelihurt/simple-go-gaming/engine"
 )
 
 type keyboardMover struct {
-	parent *element
+	parent *engine.Element
 	speed  float64
-	sr     *spriteRenderer
+	sr     *engine.SpriteRenderer
 }
 
-func newKeyboardMover(parent *element, speed float64) *keyboardMover {
+func newKeyboardMover(parent *engine.Element, speed float64) *keyboardMover {
 	return &keyboardMover{
 		parent: parent,
 		speed:  speed,
@@ -46,6 +47,6 @@ func (context *keyboardMover) onUpdate() error {
 func (context *keyboardMover) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
-func (context *keyboardMover) onCollision(other *element) error {
+func (context *keyboardMover) onCollision(other *engine.Element) error {
 	return nil
 }

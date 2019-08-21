@@ -2,15 +2,16 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/josnelihurt/simple-go-gaming/engine"
 )
 
 type vulnerableToElement struct {
-	parent        *element
+	parent        *engine.Element
 	vulnerableTo  []string
-	onHitCallback func(*element)
+	onHitCallback func(*engine.Element)
 }
 
-func newVulnerableToElement(parent *element, onHitCallback func(*element), vulnerableTo ...string) *vulnerableToElement {
+func newVulnerableToElement(parent *engine.Element, onHitCallback func(*engine.Element), vulnerableTo ...string) *vulnerableToElement {
 	return &vulnerableToElement{
 		parent:        parent,
 		vulnerableTo:  vulnerableTo,
@@ -23,7 +24,7 @@ func (context *vulnerableToElement) onDraw(renderer *sdl.Renderer) error {
 func (context *vulnerableToElement) onUpdate() error {
 	return nil
 }
-func (context *vulnerableToElement) onCollision(other *element) error {
+func (context *vulnerableToElement) onCollision(other *engine.Element) error {
 	if contains(context.vulnerableTo, other.tag) {
 		context.parent.active = false
 		context.onHitCallback(other)

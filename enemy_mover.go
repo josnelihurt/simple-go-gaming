@@ -1,13 +1,17 @@
 package main
 
-import "github.com/veandco/go-sdl2/sdl"
+import (
+	"github.com/veandco/go-sdl2/sdl"
+
+	"github.com/josnelihurt/simple-go-gaming/engine"
+)
 
 type enemyMover struct {
 	active bool
-	parent *element
+	parent *engine.Element
 }
 
-func newEnemyMover(parent *element) *enemyMover {
+func newEnemyMover(parent *engine.Element) *enemyMover {
 	return &enemyMover{
 		active: false,
 		parent: parent,
@@ -25,6 +29,6 @@ func (context *enemyMover) onUpdate() error {
 func (context *enemyMover) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
-func (context *enemyMover) onCollision(other *element) error {
+func (context *enemyMover) onCollision(other *engine.Element) error {
 	return nil
 }

@@ -2,15 +2,16 @@ package main
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/josnelihurt/simple-go-gaming/engine"
 )
 
 type bulletMover struct {
-	parent              *element
+	parent              *engine.Element
 	speed               float64
 	onCollisionCallback func()
 }
 
-func newBulletMover(parent *element, speed float64, onCollisionCallback func()) *bulletMover {
+func newBulletMover(parent *engine.Element, speed float64, onCollisionCallback func()) *bulletMover {
 	return &bulletMover{
 		parent:              parent,
 		speed:               speed,
@@ -34,7 +35,7 @@ func (context *bulletMover) onDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
-func (context *bulletMover) onCollision(other *element) error {
+func (context *bulletMover) onCollision(other *engine.Element) error {
 	if other.tag == "bullet" {
 		return nil
 	}

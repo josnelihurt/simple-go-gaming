@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"github.com/josnelihurt/simple-go-gaming/engine"
+
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -10,16 +12,16 @@ const (
 	backgroundSpeed = 0.5
 )
 
-func newBackground(renderer *sdl.Renderer) *element {
-	background := &element{
+func newBackground(renderer *sdl.Renderer) *engine.Element {
+	background := &engine.Element{
 		active: true,
 	}
-	background.addCompoenent(newBackgroundMover(renderer))
+	background.addComponent(newBackgroundMover(renderer))
 	return background
 }
 
 type backgroundMover struct {
-	parent       *element
+	parent       *engine.Element
 	texture      *sdl.Texture
 	currentY     float64
 	bitmapWidth  int32
@@ -27,7 +29,7 @@ type backgroundMover struct {
 }
 
 func newBackgroundMover(renderer *sdl.Renderer) *backgroundMover {
-	texture := textureFromFile(renderer, "sprites/background_space.png")
+	texture := engine.textureFromFile(renderer, "sprites/background_space.png")
 	_, _, width, height, err := texture.Query()
 	if err != nil {
 		panic(fmt.Errorf("querying texture:%v", err))
@@ -68,6 +70,6 @@ func (context *backgroundMover) onDraw(renderer *sdl.Renderer) error {
 
 	return nil
 }
-func (context *backgroundMover) onCollision(other *element) error {
+func (context *backgroundMover) onCollision(other *engine.Element) error {
 	return nil
 }

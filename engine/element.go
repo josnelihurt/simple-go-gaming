@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"fmt"
@@ -8,27 +8,27 @@ import (
 	"github.com/veandco/go-sdl2/ttf"
 )
 
-type vector struct {
+type Vector struct {
 	x, y float64
 }
 
 type component interface {
 	onUpdate() error
 	onDraw(renderer *sdl.Renderer) error
-	onCollision(other *element) error
+	onCollision(other *Element) error
 }
 
-type element struct {
-	position   vector
+type Element struct {
+	position   Vector
 	rotation   float64
 	active     bool
-	collisions []circle
+	collisions []Circle
 	components []component
 	tag        string
 	z          uint8
 }
 
-func (context *element) runOnAllComponents(callback func(component, *sdl.Renderer) error, renderer *sdl.Renderer) error {
+func (context *Element) RunOnAllComponents(callback func(component, *sdl.Renderer) error, renderer *sdl.Renderer) error {
 	for _, currentComponent := range context.components {
 		if err := callback(currentComponent, renderer); err != nil {
 			return err
@@ -37,7 +37,7 @@ func (context *element) runOnAllComponents(callback func(component, *sdl.Rendere
 	return nil
 }
 
-func (context *element) draw(renderer *sdl.Renderer) error {
+func (context *Element) Draw(renderer *sdl.Renderer) error {
 	for _, currentComponent := range context.components {
 		if err := currentComponent.onDraw(renderer); err != nil {
 			return err
@@ -45,7 +45,7 @@ func (context *element) draw(renderer *sdl.Renderer) error {
 	}
 	return nil
 }
-func (context *element) update() error {
+func (context *Element) Update() error {
 	for _, currentComponent := range context.components {
 		if err := currentComponent.onUpdate(); err != nil {
 			return err
@@ -54,7 +54,7 @@ func (context *element) update() error {
 	return nil
 }
 
-func (context *element) addCompoenent(new component) {
+func (context *Element) AddComponent(new component) {
 	for _, existing := range context.components {
 		if reflect.TypeOf(existing) == reflect.TypeOf(new) {
 			panic(fmt.Sprintf("attempt to add new component with existing type %v",
@@ -64,7 +64,7 @@ func (context *element) addCompoenent(new component) {
 	context.components = append(context.components, new)
 }
 
-func (context *element) getComponent(withType component) component {
+func (context *Element) GetComponent(withType component) component {
 	componentType := reflect.TypeOf(withType)
 	for _, currentComponent := range context.components {
 		if reflect.TypeOf(currentComponent) == componentType {
@@ -75,7 +75,7 @@ func (context *element) getComponent(withType component) component {
 	panic(fmt.Sprintf("there is not such component %v", componentType))
 }
 
-func (context *element) collision(other *element) error {
+func (context *Element) Collision(other *Element) error {
 	for _, currentComponent := range context.components {
 		if err := currentComponent.onCollision(other); err != nil {
 			return err
@@ -84,7 +84,7 @@ func (context *element) collision(other *element) error {
 	return nil
 }
 
-func loadFont(fontSize int) (font *ttf.Font, err error) {
+func LoadFont(fontSize int) (font *ttf.Font, err error) {
 	font, err = ttf.OpenFont("fonts/Starjout.ttf", fontSize)
 	if err != nil {
 		return nil, fmt.Errorf("initializing font:%v", err)
