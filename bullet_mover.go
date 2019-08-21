@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/veandco/go-sdl2/sdl"
 	"github.com/josnelihurt/simple-go-gaming/engine"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 type bulletMover struct {
@@ -19,27 +19,27 @@ func newBulletMover(parent *engine.Element, speed float64, onCollisionCallback f
 	}
 }
 
-func (context *bulletMover) onUpdate() error {
+func (context *bulletMover) OnUpdate() error {
 	parent := context.parent
-	parent.position.y -= bulletSpeed * delta
+	parent.Position.Y -= bulletSpeed * delta
 
-	if parent.position.x > screenWidth || parent.position.x < 0 ||
-		parent.position.y < 0 {
-		parent.active = false
+	if parent.Position.X > screenWidth || parent.Position.X < 0 ||
+		parent.Position.Y < 0 {
+		parent.Active = false
 	}
 
 	return nil
 }
 
-func (context *bulletMover) onDraw(renderer *sdl.Renderer) error {
+func (context *bulletMover) OnDraw(renderer *sdl.Renderer) error {
 	return nil
 }
 
-func (context *bulletMover) onCollision(other *engine.Element) error {
-	if other.tag == "bullet" {
+func (context *bulletMover) OnCollision(other *engine.Element) error {
+	if other.Tag == "bullet" {
 		return nil
 	}
-	context.parent.active = false
+	context.parent.Active = false
 	context.onCollisionCallback()
 	//logger <- fmt.Sprintf("bullet has crashed with %v :", other)
 	return nil

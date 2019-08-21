@@ -48,12 +48,12 @@ func loadElements(elementPool *engine.ElementPool, renderer *sdl.Renderer, audio
 	elementPool.InsertElement(newScore())
 	elementPool.InsertElement(newPlayer(renderer, audioDev))
 	elementPool.InsertSlice(initBulletPool(renderer, func() {
-		elementPool.GetElementsByTag("score")[0].getComponent(&scoreCounter{}).(*scoreCounter).increase()
+		elementPool.GetElementsByTag("score")[0].GetComponent(&scoreCounter{}).(*scoreCounter).increase()
 	}))
-	elementPool.insertSlice(createEnemySwarm(renderer, func() {
-		for _, currentEnemy := range elementPool.getElementsByTag("enemy") {
-			if currentEnemy.active == true {
-				currentEnemyMover := currentEnemy.getComponent(&enemyMover{})
+	elementPool.InsertSlice(createEnemySwarm(renderer, func() {
+		for _, currentEnemy := range elementPool.GetElementsByTag("enemy") {
+			if currentEnemy.Active == true {
+				currentEnemyMover := currentEnemy.GetComponent(&enemyMover{})
 				currentEnemyMover.(*enemyMover).active = true
 				break
 			}
@@ -94,7 +94,7 @@ func main() {
 	audioDev := openAudioDevice()
 	defer sdl.CloseAudioDevice(audioDev)
 
-	elementPool := newElementPool()
+	elementPool := engine.NewElementPool()
 	loadElements(&elementPool, renderer, audioDev)
 
 	for {
@@ -106,7 +106,7 @@ func main() {
 		renderer.SetDrawColor(255, 255, 0, 0)
 		renderer.Clear()
 		elementPool.UpdateElements(renderer)
-		if err := checkColisions(&elementPool); err != nil {
+		if err := engine.CheckColisions(&elementPool); err != nil {
 			util.Logger <- fmt.Sprintf("checking collisions:%v", err)
 		}
 

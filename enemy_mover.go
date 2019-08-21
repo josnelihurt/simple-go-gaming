@@ -17,18 +17,18 @@ func newEnemyMover(parent *engine.Element) *enemyMover {
 		parent: parent,
 	}
 }
-func (context *enemyMover) onUpdate() error {
-	if context.parent.position.y >= screenHeight {
-		context.parent.active = false
+func (context *enemyMover) OnUpdate() error {
+	if context.parent.Position.Y >= screenHeight {
+		context.parent.Active = false
 	}
 	if context.active {
-		context.parent.position.y += enemySpeed * delta
+		context.parent.Position.Y += enemySpeed * delta
 	}
 	return nil
 }
-func (context *enemyMover) onDraw(renderer *sdl.Renderer) error {
+func (context *enemyMover) OnDraw(renderer *sdl.Renderer) error {
 	return nil
 }
-func (context *enemyMover) onCollision(other *engine.Element) error {
+func (context *enemyMover) OnCollision(other *engine.Element) error {
 	return nil
 }

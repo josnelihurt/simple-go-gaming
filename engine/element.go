@@ -9,26 +9,26 @@ import (
 )
 
 type Vector struct {
-	x, y float64
+	X, Y float64
 }
 
-type component interface {
-	onUpdate() error
-	onDraw(renderer *sdl.Renderer) error
-	onCollision(other *Element) error
+type Component interface {
+	OnUpdate() error
+	OnDraw(renderer *sdl.Renderer) error
+	OnCollision(other *Element) error
 }
 
 type Element struct {
-	position   Vector
-	rotation   float64
-	active     bool
-	collisions []Circle
-	components []component
-	tag        string
-	z          uint8
+	Position   Vector
+	Rotation   float64
+	Active     bool
+	Collisions []Circle
+	components []Component
+	Tag        string
+	Z          uint8
 }
 
-func (context *Element) RunOnAllComponents(callback func(component, *sdl.Renderer) error, renderer *sdl.Renderer) error {
+func (context *Element) RunOnAllComponents(callback func(Component, *sdl.Renderer) error, renderer *sdl.Renderer) error {
 	for _, currentComponent := range context.components {
 		if err := callback(currentComponent, renderer); err != nil {
 			return err
@@ -39,7 +39,7 @@ func (context *Element) RunOnAllComponents(callback func(component, *sdl.Rendere
 
 func (context *Element) Draw(renderer *sdl.Renderer) error {
 	for _, currentComponent := range context.components {
-		if err := currentComponent.onDraw(renderer); err != nil {
+		if err := currentComponent.OnDraw(renderer); err != nil {
 			return err
 		}
 	}
@@ -47,14 +47,14 @@ func (context *Element) Draw(renderer *sdl.Renderer) error {
 }
 func (context *Element) Update() error {
 	for _, currentComponent := range context.components {
-		if err := currentComponent.onUpdate(); err != nil {
+		if err := currentComponent.OnUpdate(); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (context *Element) AddComponent(new component) {
+func (context *Element) AddComponent(new Component) {
 	for _, existing := range context.components {
 		if reflect.TypeOf(existing) == reflect.TypeOf(new) {
 			panic(fmt.Sprintf("attempt to add new component with existing type %v",
@@ -64,7 +64,7 @@ func (context *Element) AddComponent(new component) {
 	context.components = append(context.components, new)
 }
 
-func (context *Element) GetComponent(withType component) component {
+func (context *Element) GetComponent(withType Component) Component {
 	componentType := reflect.TypeOf(withType)
 	for _, currentComponent := range context.components {
 		if reflect.TypeOf(currentComponent) == componentType {
@@ -77,7 +77,7 @@ func (context *Element) GetComponent(withType component) component {
 
 func (context *Element) Collision(other *Element) error {
 	for _, currentComponent := range context.components {
-		if err := currentComponent.onCollision(other); err != nil {
+		if err := currentComponent.OnCollision(other); err != nil {
 			return err
 		}
 	}

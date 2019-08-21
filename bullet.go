@@ -18,24 +18,24 @@ type bullet struct {
 }
 
 func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *engine.Element {
-	bullet := &element{}
-	bullet.z = 10
+	bullet := &engine.Element{}
+	bullet.Z = 10
 
-	sr := newSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale)
-	bullet.addComponent(sr)
+	sr := engine.NewSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale)
+	bullet.AddComponent(sr)
 
 	mover := newBulletMover(bullet, bulletSpeed, onCollisionCallback)
-	bullet.addComponent(mover)
+	bullet.AddComponent(mover)
 
-	bullet.collisions = append(bullet.collisions,
-		circle{
-			center: &bullet.position,
-			radius: 5,
+	bullet.Collisions = append(bullet.Collisions,
+		engine.Circle{
+			Center: &bullet.Position,
+			Radius: 5,
 		})
 
-	bullet.active = false
-	bullet.rotation = 0.0
-	bullet.tag = "bullet"
+	bullet.Active = false
+	//bullet.rotation = 0.0
+	bullet.Tag = "bullet"
 
 	return bullet
 }
@@ -52,7 +52,7 @@ func initBulletPool(renderer *sdl.Renderer, onCollisionCallback func()) []*engin
 
 func bulletFromPool() (*engine.Element, bool) {
 	for _, b := range bulletPool {
-		if !b.active {
+		if !b.Active {
 			return b, true
 		}
 	}

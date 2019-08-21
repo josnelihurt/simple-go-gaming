@@ -19,7 +19,7 @@ func NewElementPool() ElementPool {
 	}
 }
 func insertSort(data []*Element, el *Element) []*Element {
-	index := sort.Search(len(data), func(i int) bool { return data[i].z > el.z })
+	index := sort.Search(len(data), func(i int) bool { return data[i].Z > el.Z })
 	data = append(data, &Element{})
 	copy(data[index+1:], data[index:])
 	data[index] = el
@@ -37,7 +37,7 @@ func (context *ElementPool) InsertSlice(newChunk []*Element) {
 func (context *ElementPool) GetElementsByTag(tag string) []*Element {
 	var elements []*Element
 	for _, currentElement := range context.elements {
-		if currentElement.tag == tag {
+		if currentElement.Tag == tag {
 			elements = append(elements, currentElement)
 		}
 	}
@@ -46,7 +46,7 @@ func (context *ElementPool) GetElementsByTag(tag string) []*Element {
 
 func (context *ElementPool) UpdateElements(renderer *sdl.Renderer) {
 	for _, currentElement := range context.elements {
-		if currentElement.active {
+		if currentElement.Active {
 			if err := currentElement.Update(); err != nil {
 				util.Logger <- fmt.Sprintf("updating fail:%v", err)
 			}

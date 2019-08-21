@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/josnelihurt/simple-go-gaming/engine/util"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -15,7 +16,7 @@ func inputHandler() (continueFlag bool) {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch event.(type) {
 		case *sdl.QuitEvent:
-			logger <- fmt.Sprintf("exit requested:")
+			util.Logger <- fmt.Sprintf("exit requested:")
 			return false
 		}
 	}

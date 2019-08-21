@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/josnelihurt/simple-go-gaming/engine/util"
 )
 
 func check(e error) {
@@ -17,12 +19,12 @@ func unPackFileFromAsset(folder, filename string) {
 		file, _ := Asset(out)
 		fileIO, _ := os.Create(out)
 		if _, err := fileIO.Write(file); err == nil {
-			logger <- fmt.Sprintf("%v unpacked from resources", out)
+			util.Logger <- fmt.Sprintf("%v unpacked from resources", out)
 		}
 		fileIO.Sync()
 		fileIO.Close()
 	} else {
-		logger <- fmt.Sprintf("%v already in fs", out)
+		util.Logger <- fmt.Sprintf("%v already in fs", out)
 	}
 }
 
