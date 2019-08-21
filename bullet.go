@@ -14,7 +14,6 @@ type bullet struct {
 	x, y    float64
 	active  bool
 	angle   float64
-	score   *scoreRenderer
 }
 
 func newBullet(renderer *sdl.Renderer, onCollisionCallback func()) *element {
