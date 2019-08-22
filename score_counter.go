@@ -30,5 +30,8 @@ func (context *scoreCounter) OnCollision(other *engine.Element) error {
 	return nil
 }
 func (context *scoreCounter) OnMessage(message *engine.Message) error {
+	if message.Code == engine.MsgCollision && message.Sender.Tag == "enemy" {
+		context.currentValue++
+	}
 	return nil
 }
