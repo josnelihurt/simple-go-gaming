@@ -10,20 +10,14 @@ const (
 	bulletScale = 1.0
 )
 
-type bullet struct {
-	texture *sdl.Texture
-	x, y    float64
-	active  bool
-	angle   float64
-}
-
 func newBullet(renderer *sdl.Renderer) *engine.Element {
 	bullet := &engine.Element{}
 	bullet.Z = 10
 
 	bullet.AddComponent(engine.NewSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale))
 	bullet.AddComponent(newBulletMover(bullet, bulletSpeed))
-	bullet.AddComponent(engine.NewCollisionDetecter(bullet, ""))
+	bullet.AddComponent(engine.NewCollisionDetecter(bullet, false, ""))
+	bullet.AddComponent(engine.NewComponentDestroyerOnMessage(bullet, engine.MsgCollision, "enemy"))
 
 	bullet.Collisions = append(bullet.Collisions,
 		engine.Circle{

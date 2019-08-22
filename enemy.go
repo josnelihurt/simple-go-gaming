@@ -21,34 +21,13 @@ func newBasicEnemy(renderer *sdl.Renderer, position engine.Vector) *engine.Eleme
 	basicEnemy.Active = true
 
 	basicEnemy.AddComponent(engine.NewSpriteRenderer(basicEnemy, renderer, "sprites/basic_enemy.png", enemyScale))
-	basicEnemy.AddComponent(engine.NewCollisionDetecter(basicEnemy, "bullet", "player"))
+	basicEnemy.AddComponent(engine.NewCollisionDetecter(basicEnemy, true, "bullet", "player"))
 	basicEnemy.AddComponent(newEnemyMover(basicEnemy))
-	basicEnemy.AddComponent(NewComponentDestroyerOnCollision(basicEnemy))
+	basicEnemy.AddComponent(engine.NewComponentDestroyerOnMessage(basicEnemy, engine.MsgCollision, "bullet"))
 	basicEnemy.Collisions = append(basicEnemy.Collisions,
 		engine.Circle{
 			Center: &basicEnemy.Position,
 			Radius: basicEnemySize / 2,
 		})
 	return basicEnemy
-}
-
-type componentDestroyerOnCollision struct {
-	parent *engine.Element
-}
-
-func NewComponentDestroyerOnCollision(parent *engine.Element) *componentDestroyerOnCollision {
-	return &componentDestroyerOnCollision{
-		parent: parent,
-	}
-}
-
-func (context *componentDestroyerOnCollision) OnUpdate() error                         { return nil }
-func (context *componentDestroyerOnCollision) OnDraw(renderer *sdl.Renderer) error     { return nil }
-func (context *componentDestroyerOnCollision) OnCollision(other *engine.Element) error { return nil }
-func (context *componentDestroyerOnCollision) OnMessage(message *engine.Message) error {
-	context.parent.Active = false
-	if message.RelatedTo[0].Tag == "player" {
-		message.SendToOtherElements = true
-	}
-	return nil
 }
