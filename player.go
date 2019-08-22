@@ -27,16 +27,15 @@ func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *engine.Eleme
 		Y: screenHeight - currentSpriteRenderer.ScaledHeight/2.0,
 	}
 	player.AddComponent(currentSpriteRenderer)
-	player.AddComponent(engine.NewKeyboardMover(
-		player,
-		&engine.Rect{
-			X:      currentSpriteRenderer.ScaledWidth / 2.0,
-			Y:      4 * screenHeight / 5,
-			Width:  screenWidth - currentSpriteRenderer.ScaledWidth,
-			Height: screenHeight/5 - currentSpriteRenderer.ScaledHeight/2.0},
-		&delta, playerSpeed))
 	player.AddComponent(newKeyboardShooter(player, playerShotCooldown, audioDev))
+	allowedRect := &engine.Rect{
+		X:      currentSpriteRenderer.ScaledWidth / 2.0,
+		Y:      4 * screenHeight / 5,
+		Width:  screenWidth - currentSpriteRenderer.ScaledWidth,
+		Height: screenHeight/5 - currentSpriteRenderer.ScaledHeight/2.0}
+	player.AddComponent(engine.NewKeyboardMover(player, allowedRect, &delta, playerSpeed))
 	player.AddComponent(engine.NewCollisionDetecter(player, true, "enemy"))
+	player.AddComponent(engine.NewSoundPlayer(player, "sounds/explosion.wav", audioDev, engine.MsgCollision, "enemy"))
 	player.Collisions = append(player.Collisions,
 		engine.Circle{
 			Center: &player.Position,
