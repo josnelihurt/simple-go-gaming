@@ -36,8 +36,8 @@ func (context *playerLifeCounter) OnUpdate() error {
 	return nil
 }
 func (context *playerLifeCounter) OnMessage(message *engine.Message) error {
-	util.Logger <- fmt.Sprintf("msg:%v", message)
-	if message.Code == engine.MsgCollision || message.Code == msgHitPlayer {
+	util.Logger <- fmt.Sprintf("life hit:%v", message)
+	if (message.Code == engine.MsgCollision && message.Sender.Tag != "player") || message.Code == msgHitPlayer {
 		context.currentValue--
 	}
 
