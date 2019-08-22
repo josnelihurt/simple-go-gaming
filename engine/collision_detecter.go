@@ -10,6 +10,7 @@ type CollisionDetecter struct {
 	vulnerableTo                []string
 	sendMessagesToOtherElements bool
 }
+type localType = CollisionDetecter
 
 // NewCollisionDetecter creates a CollisionDetecter instance with given parameters
 func NewCollisionDetecter(parent *Element, sendMessagesToOtherElements bool, elementsActives ...string) *CollisionDetecter {
@@ -33,6 +34,7 @@ func (context *CollisionDetecter) OnCollision(other *Element) error {
 			Code:                MsgCollision,
 			RelatedTo:           []*Element{other},
 			SendToOtherElements: context.sendMessagesToOtherElements,
+			Data:                "newCollision",
 		})
 	}
 	return nil

@@ -11,7 +11,7 @@ type keyboardShooter struct {
 	parent   *engine.Element
 	cooldown time.Duration
 	lastShot time.Time
-	player   engine.SoundPlayer
+	player   *engine.SoundPlayer
 }
 
 func newKeyboardShooter(parent *engine.Element, cooldown time.Duration, audioDev sdl.AudioDeviceID) *keyboardShooter {
@@ -19,7 +19,7 @@ func newKeyboardShooter(parent *engine.Element, cooldown time.Duration, audioDev
 	return &keyboardShooter{
 		parent:   parent,
 		cooldown: cooldown,
-		player:   engine.NewSoundPlayer(parent, "sounds/NFF-laser.wav", audioDev, engine.MsgNone, ""),
+		player:   engine.NewSoundPlayer(parent, "sounds/NFF-laser.wav", audioDev, []int{engine.MsgNone}, ""),
 	}
 }
 func (context *keyboardShooter) OnUpdate() error {
@@ -38,16 +38,9 @@ func (context *keyboardShooter) OnUpdate() error {
 	}
 	return nil
 }
-func (context *keyboardShooter) OnDraw(enderer *sdl.Renderer) error {
-	return nil
-}
-func (context *keyboardShooter) OnCollision(other *engine.Element) error {
-	return nil
-}
-func (context *keyboardShooter) OnMessage(message *engine.Message) error {
-	return nil
-}
-
+func (context *keyboardShooter) OnDraw(enderer *sdl.Renderer) error      { return nil }
+func (context *keyboardShooter) OnCollision(other *engine.Element) error { return nil }
+func (context *keyboardShooter) OnMessage(message *engine.Message) error { return nil }
 func (context *keyboardShooter) shoot(x, y float64) {
 	if currentBullet, ok := bulletFromPool(); ok {
 		currentBullet.Active = true

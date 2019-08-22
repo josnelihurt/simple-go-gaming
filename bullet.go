@@ -11,23 +11,23 @@ const (
 )
 
 func newBullet(renderer *sdl.Renderer) *engine.Element {
-	bullet := &engine.Element{}
-	bullet.Z = 10
+	context := &engine.Element{}
+	context.Z = 10
 
-	bullet.AddComponent(engine.NewSpriteRenderer(bullet, renderer, "sprites/bullet.png", bulletScale))
-	bullet.AddComponent(newBulletMover(bullet, bulletSpeed))
-	bullet.AddComponent(engine.NewCollisionDetecter(bullet, false, ""))
-	bullet.AddComponent(engine.NewComponentDestroyerOnMessage(bullet, engine.MsgCollision, "enemy"))
+	context.AddComponent(engine.NewSpriteRenderer(context, renderer, "sprites/bullet.png", bulletScale))
+	context.AddComponent(newBulletMover(context, bulletSpeed))
+	context.AddComponent(engine.NewCollisionDetecter(context, false, ""))
+	context.AddComponent(engine.NewComponentDestroyerOnMessage(context, engine.MsgCollision, "enemy"))
 
-	bullet.Collisions = append(bullet.Collisions,
+	context.Collisions = append(context.Collisions,
 		engine.Circle{
-			Center: &bullet.Position,
+			Center: &context.Position,
 			Radius: 5,
 		})
 
-	bullet.Active = false
-	bullet.Rotation = 0.0
-	bullet.Tag = "bullet"
+	context.Active = false
+	context.Rotation = 0.0
+	context.Tag = "bullet"
 
-	return bullet
+	return context
 }

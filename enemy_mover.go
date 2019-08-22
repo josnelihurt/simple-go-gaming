@@ -20,18 +20,19 @@ func newEnemyMover(parent *engine.Element) *enemyMover {
 func (context *enemyMover) OnUpdate() error {
 	if context.parent.Position.Y >= screenHeight {
 		context.parent.Active = false
+		context.parent.BroadcastMessageToComponents(&engine.Message{
+			Code:                msgHitPlayer,
+			Sender:              context.parent,
+			SendToOtherElements: true,
+			Data:                "HitPlayer",
+			RelatedTo:           []*engine.Element{context.parent},
+		})
 	}
 	if context.active {
 		context.parent.Position.Y += enemySpeed * delta
 	}
 	return nil
 }
-func (context *enemyMover) OnDraw(renderer *sdl.Renderer) error {
-	return nil
-}
-func (context *enemyMover) OnCollision(other *engine.Element) error {
-	return nil
-}
-func (context *enemyMover) OnMessage(message *engine.Message) error {
-	return nil
-}
+func (context *enemyMover) OnDraw(renderer *sdl.Renderer) error     { return nil }
+func (context *enemyMover) OnCollision(other *engine.Element) error { return nil }
+func (context *enemyMover) OnMessage(message *engine.Message) error { return nil }
