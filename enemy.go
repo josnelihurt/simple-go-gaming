@@ -9,7 +9,7 @@ import (
 const (
 	basicEnemySize = 110
 	enemyScale     = 1.0
-	enemySpeed     = 6.0
+	enemySpeed     = 3.0
 )
 
 func newBasicEnemy(renderer *sdl.Renderer, position engine.Vector) *engine.Element {
