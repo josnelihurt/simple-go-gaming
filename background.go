@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/josnelihurt/simple-go-gaming/engine"
-
 	"github.com/veandco/go-sdl2/sdl"
 )
 

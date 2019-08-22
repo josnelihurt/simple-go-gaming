@@ -3,6 +3,9 @@ package engine
 type Vector struct {
 	X, Y float64
 }
+type Rect struct {
+	X, Y, Width, Height float64
+}
 type Circle struct {
 	Center *Vector
 	Radius float64

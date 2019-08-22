@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	playerSpeed        = 5
+	playerSpeed        = 5.0
 	playerShotCooldown = time.Millisecond * 200
 	playerScale        = 0.7
 )
@@ -27,7 +27,14 @@ func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *engine.Eleme
 		Y: screenHeight - currentSpriteRenderer.ScaledHeight/2.0,
 	}
 	player.AddComponent(currentSpriteRenderer)
-	player.AddComponent(newKeyboardMover(player, playerSpeed))
+	player.AddComponent(engine.NewKeyboardMover(
+		player,
+		&engine.Rect{
+			X:      currentSpriteRenderer.ScaledWidth / 2.0,
+			Y:      4 * screenHeight / 5,
+			Width:  screenWidth - currentSpriteRenderer.ScaledWidth,
+			Height: screenHeight/5 - currentSpriteRenderer.ScaledHeight/2.0},
+		&delta, playerSpeed))
 	player.AddComponent(newKeyboardShooter(player, playerShotCooldown, audioDev))
 	player.AddComponent(engine.NewCollisionDetecter(player, true, "enemy"))
 	player.Collisions = append(player.Collisions,
