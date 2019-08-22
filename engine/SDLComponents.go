@@ -58,15 +58,15 @@ func createRenderer(screenWidth, screenHeight int32, gameName string) (*sdl.Rend
 	return renderer, window, nil
 }
 
-func NewSDLComponents(screenWidth, screenHeight int32, gameName string) (this *SDLComponents, err error) {
-	this = &SDLComponents{}
-	if this.Renderer, this.Window, err = createRenderer(screenWidth, screenHeight, gameName); err != nil {
+func NewSDLComponents(screenWidth, screenHeight int32, gameName string) (context *SDLComponents, err error) {
+	context = &SDLComponents{}
+	if context.Renderer, context.Window, err = createRenderer(screenWidth, screenHeight, gameName); err != nil {
 		util.Logger <- fmt.Sprintf("init errro%v:", err)
 		return nil, err
 	}
-	this.AudioDev = openAudioDevice()
+	context.AudioDev = openAudioDevice()
 
-	return this, nil
+	return context, nil
 }
 
 func (context *SDLComponents) Release() {

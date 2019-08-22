@@ -13,10 +13,12 @@ func collides(c1, c2 Circle) bool {
 	return dist <= c1.Radius+c2.Radius
 }
 
+// ElementManager represents a simple controller for all elements
 type ElementManager struct {
 	elements []*Element
 }
 
+// NewElementManager creates a new ElementManager
 func NewElementManager() ElementManager {
 	var elements []*Element
 	return ElementManager{
@@ -24,11 +26,30 @@ func NewElementManager() ElementManager {
 	}
 }
 
+// DisableElementsByTag disables all elements by a given set of tags
+func (context *ElementManager) DisableElementsByTag(tags ...string) {
+	for _, currentElement := range context.elements {
+		if contains(tags, currentElement.Tag) {
+			currentElement.Active = false
+		}
+	}
+}
+
+// DisableAll disables all elements
+func (context *ElementManager) DisableAll() {
+	for _, item := range context.elements {
+		item.Active = false
+	}
+}
+
+// InsertSlice insert a new slice into the manager
 func (context *ElementManager) InsertSlice(newChunk []*Element) {
 	for _, item := range newChunk {
 		context.elements = insertSort(context.elements, item)
 	}
 }
+
+// GetElementsByTag looks for all elements with a tag
 func (context *ElementManager) GetElementsByTag(tag string) []*Element {
 	var elements []*Element
 	for _, currentElement := range context.elements {
@@ -39,6 +60,7 @@ func (context *ElementManager) GetElementsByTag(tag string) []*Element {
 	return elements
 }
 
+// UpdateElements update all elements in the manager, internally it calls to update and draw methods for all elements
 func (context *ElementManager) UpdateElements(renderer *sdl.Renderer) {
 	for _, currentElement := range context.elements {
 		if currentElement.Active {
@@ -52,7 +74,8 @@ func (context *ElementManager) UpdateElements(renderer *sdl.Renderer) {
 	}
 }
 
-func (context *ElementManager) CheckColisions() error {
+// CheckCollisions checks all collisions on for all elements
+func (context *ElementManager) CheckCollisions() error {
 	elements := context.elements // I don't like it
 
 	for i := 0; i < len(elements)-1; i++ {

@@ -14,33 +14,41 @@ const (
 	playerScale        = 0.7
 )
 
-func newPlayer(renderer *sdl.Renderer, audioDev sdl.AudioDeviceID) *engine.Element {
-	player := &engine.Element{}
-	player.Z = 10
-	player.Active = true
-	player.Rotation = 180
-	player.Tag = "player"
+func newPlayer(components *engine.SDLComponents) *engine.Element {
+	context := &engine.Element{}
+	context.Z = 10
+	context.Active = true
+	context.Rotation = 180
+	context.Tag = "player"
 
-	currentSpriteRenderer := engine.NewSpriteRenderer(player, renderer, "sprites/player.png", playerScale)
-	player.Position = engine.Vector{
+	currentSpriteRenderer := engine.NewSpriteRenderer(context, components.Renderer, "sprites/player.png", playerScale)
+	playerDefaultPosition := engine.Vector{
 		X: screenWidth / 2.0,
 		Y: screenHeight - currentSpriteRenderer.ScaledHeight/2.0,
 	}
-	player.AddComponent(currentSpriteRenderer)
-	player.AddComponent(newKeyboardShooter(player, playerShotCooldown, audioDev))
+	context.Position = playerDefaultPosition
+	context.AddComponent(currentSpriteRenderer)
+	context.AddComponent(newPlayerStarter(context, playerDefaultPosition))
+	context.AddComponent(newKeyboardShooter(context, playerShotCooldown, components.AudioDev))
+	textRenderer := engine.NewTextRenderer(
+		&engine.Vector{X: upperTextY, Y: upperTextY},
+		defaultFontSize,
+		sdl.Color{R: 255, G: 255, B: 255})
+	context.AddComponent(textRenderer)
+	context.AddComponent(newPlayerLifeCounter(context, textRenderer))
 	allowedRect := &engine.Rect{
 		X:      currentSpriteRenderer.ScaledWidth / 2.0,
 		Y:      4 * screenHeight / 5,
 		Width:  screenWidth - currentSpriteRenderer.ScaledWidth,
 		Height: screenHeight/5 - currentSpriteRenderer.ScaledHeight/2.0}
-	player.AddComponent(engine.NewKeyboardMover(player, allowedRect, &delta, playerSpeed))
-	player.AddComponent(engine.NewCollisionDetecter(player, true, "enemy"))
-	player.AddComponent(engine.NewSoundPlayer(player, "sounds/explosion.wav", audioDev, engine.MsgCollision, "enemy"))
-	player.Collisions = append(player.Collisions,
+	context.AddComponent(engine.NewKeyboardMover(context, allowedRect, &delta, playerSpeed))
+	context.AddComponent(engine.NewCollisionDetecter(context, true, "enemy"))
+	context.AddComponent(engine.NewSoundPlayer(context, "sounds/explosion.wav", components.AudioDev, []int{engine.MsgCollision, msgHitPlayer}, "enemy"))
+	context.Collisions = append(context.Collisions,
 		engine.Circle{
-			Center: &player.Position,
+			Center: &context.Position,
 			Radius: math.Max(currentSpriteRenderer.ScaledWidth, currentSpriteRenderer.ScaledHeight) / 2,
 		})
 
-	return player
+	return context
 }

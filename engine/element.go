@@ -5,12 +5,13 @@ import (
 	"reflect"
 	"sort"
 
+	"github.com/josnelihurt/simple-go-gaming/engine/util"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 type Element struct {
 	components     []Component
-	messageEmmiter func(*Message) error
+	messageEmmiter []func(*Message) error
 	Active         bool
 	Collisions     []Circle
 	Position       Vector
@@ -20,7 +21,7 @@ type Element struct {
 }
 
 func (context *Element) RegisterEmmiterCallback(callback func(*Message) error) {
-	context.messageEmmiter = callback
+	context.messageEmmiter = append(context.messageEmmiter, callback)
 }
 func (context *Element) BroadcastMessageToComponents(message *Message) error {
 	for _, currentComponent := range context.components {
@@ -28,9 +29,11 @@ func (context *Element) BroadcastMessageToComponents(message *Message) error {
 			return err
 		}
 	}
-	if context.messageEmmiter != nil && message.SendToOtherElements {
-		if err := context.messageEmmiter(message); err != nil {
-			return err
+	if len(context.messageEmmiter) > 0 && message.SendToOtherElements {
+		for _, currentCallback := range context.messageEmmiter {
+			if err := currentCallback(message); err != nil {
+				util.Logger <- fmt.Sprintf("Error in msg %v", err)
+			}
 		}
 	}
 
