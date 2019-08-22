@@ -15,6 +15,7 @@ type gameLogic struct {
 	elementManager  engine.ElementManager
 	player          *engine.Element
 	backgroundSound *engine.SoundPlayer
+	gameOverScreen  *engine.Element
 }
 
 func newGameLogic() *gameLogic {
@@ -44,7 +45,7 @@ func (context *gameLogic) enemyAwaker(enemies []*engine.Element) {
 	for _, currentElement := range enemies {
 		if currentElement.Active {
 			currentElement.GetComponent(&enemyMover{}).(*enemyMover).active = true
-			time.Sleep(1900 * time.Millisecond)
+			time.Sleep(4000 * time.Millisecond)
 		}
 	}
 }
@@ -52,6 +53,7 @@ func (context *gameLogic) finishCondition() {
 	context.player.RegisterEmmiterCallback(func(message *engine.Message) error {
 		if message.Code == msgPlayerDead {
 			context.elementManager.DisableElementsByTag("enemy", "player", "score")
+			context.gameOverScreen.Active = true
 		}
 		return nil
 	})
@@ -65,8 +67,9 @@ func (context *gameLogic) createElements() (elements []*engine.Element) {
 	go context.enemyAwaker(enemySwarm)
 	engine.BindMessages(enemySwarm, context.player)
 	engine.BindMessages(enemySwarm, score)
+	context.gameOverScreen = newGameOverScreen(context.sdlComponents)
 
-	elements = append(elements, score, context.player, background)
+	elements = append(elements, score, context.player, background, context.gameOverScreen)
 	elements = append(elements, bulletPool...)
 	elements = append(elements, enemySwarm...)
 	return
