@@ -4,12 +4,14 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+// CollisionDetecter is a component that reacta to a message with given conditions
 type CollisionDetecter struct {
 	parent                      *Element
 	vulnerableTo                []string
 	sendMessagesToOtherElements bool
 }
 
+// NewCollisionDetecter creates a CollisionDetecter instance with given parameters
 func NewCollisionDetecter(parent *Element, sendMessagesToOtherElements bool, elementsActives ...string) *CollisionDetecter {
 	return &CollisionDetecter{
 		parent:                      parent,
@@ -17,6 +19,7 @@ func NewCollisionDetecter(parent *Element, sendMessagesToOtherElements bool, ele
 		sendMessagesToOtherElements: sendMessagesToOtherElements,
 	}
 }
+
 func (context *CollisionDetecter) OnDraw(renderer *sdl.Renderer) error {
 	return nil
 }

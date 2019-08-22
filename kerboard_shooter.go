@@ -11,7 +11,7 @@ type keyboardShooter struct {
 	parent   *engine.Element
 	cooldown time.Duration
 	lastShot time.Time
-	player   soundPlayer
+	player   engine.SoundPlayer
 }
 
 func newKeyboardShooter(parent *engine.Element, cooldown time.Duration, audioDev sdl.AudioDeviceID) *keyboardShooter {
@@ -19,7 +19,7 @@ func newKeyboardShooter(parent *engine.Element, cooldown time.Duration, audioDev
 	return &keyboardShooter{
 		parent:   parent,
 		cooldown: cooldown,
-		player:   newSoundPlayer("sounds/NFF-laser.wav", audioDev),
+		player:   engine.NewSoundPlayer(parent, "sounds/NFF-laser.wav", audioDev, engine.MsgNone, ""),
 	}
 }
 func (context *keyboardShooter) OnUpdate() error {
@@ -29,7 +29,7 @@ func (context *keyboardShooter) OnUpdate() error {
 
 	if keys[sdl.SCANCODE_SPACE] == 1 {
 		if time.Since(context.lastShot) > context.cooldown {
-			context.player.play()
+			context.player.Play()
 			sprite := parent.GetComponent(&engine.SpriteRenderer{}).(*engine.SpriteRenderer)
 			context.shoot(parent.Position.X+23, parent.Position.Y-sprite.ScaledHeight/2)
 			context.shoot(parent.Position.X-23, parent.Position.Y-sprite.ScaledHeight/2)

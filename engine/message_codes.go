@@ -1,5 +1,6 @@
 package engine
 
 const (
-	MsgCollision = iota
+	MsgNone = iota
+	MsgCollision
 )
