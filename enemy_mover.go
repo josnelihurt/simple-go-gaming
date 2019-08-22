@@ -4,6 +4,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 
 	"github.com/josnelihurt/simple-go-gaming/engine"
+	"github.com/josnelihurt/simple-go-gaming/engine/util"
 )
 
 type enemyMover struct {
@@ -19,6 +20,7 @@ func newEnemyMover(parent *engine.Element) *enemyMover {
 }
 func (context *enemyMover) OnUpdate() error {
 	if context.parent.Position.Y >= screenHeight {
+		util.Logger <- "enemy has finished his race"
 		context.parent.Active = false
 		context.parent.BroadcastMessageToComponents(&engine.Message{
 			Code:                msgHitPlayer,
