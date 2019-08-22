@@ -11,9 +11,10 @@ import (
 var delta float64 // <-- where may I put you???
 
 type gameLogic struct {
-	sdlComponents  *engine.SDLComponents
-	elementManager engine.ElementManager
-	player         *engine.Element
+	sdlComponents   *engine.SDLComponents
+	elementManager  engine.ElementManager
+	player          *engine.Element
+	backgroundSound *engine.SoundPlayer
 }
 
 func newGameLogic() *gameLogic {
@@ -21,6 +22,8 @@ func newGameLogic() *gameLogic {
 	context.initSDLComponents()
 	context.initElementManager()
 	context.finishCondition()
+	context.backgroundSound = engine.NewSoundPlayer(nil, "sound/scene.wav", context.sdlComponents.AudioDev, []int{}, "")
+	go context.backgroundSound.Play()
 	return context
 }
 func (context *gameLogic) Release() {
@@ -41,7 +44,7 @@ func (context *gameLogic) enemyAwaker(enemies []*engine.Element) {
 	for _, currentElement := range enemies {
 		if currentElement.Active {
 			currentElement.GetComponent(&enemyMover{}).(*enemyMover).active = true
-			time.Sleep(900 * time.Millisecond)
+			time.Sleep(1900 * time.Millisecond)
 		}
 	}
 }
