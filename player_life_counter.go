@@ -17,7 +17,7 @@ type playerLifeCounter struct {
 func newPlayerLifeCounter(parent *engine.Element, textRenderer *engine.TextRenderer) *playerLifeCounter {
 	return &playerLifeCounter{
 		parent:       parent,
-		currentValue: 3,
+		currentValue: 30,
 		textRenderer: textRenderer,
 	}
 }

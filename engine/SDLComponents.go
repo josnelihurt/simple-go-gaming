@@ -8,6 +8,7 @@ import (
 	"github.com/veandco/go-sdl2/ttf"
 )
 
+//SDLComponents contains sdl components used in the engine
 type SDLComponents struct {
 	Renderer *sdl.Renderer
 	Window   *sdl.Window
@@ -58,6 +59,7 @@ func createRenderer(screenWidth, screenHeight int32, gameName string) (*sdl.Rend
 	return renderer, window, nil
 }
 
+//NewSDLComponents creates SDLComponents
 func NewSDLComponents(screenWidth, screenHeight int32, gameName string) (context *SDLComponents, err error) {
 	context = &SDLComponents{}
 	if context.Renderer, context.Window, err = createRenderer(screenWidth, screenHeight, gameName); err != nil {
@@ -69,6 +71,7 @@ func NewSDLComponents(screenWidth, screenHeight int32, gameName string) (context
 	return context, nil
 }
 
+//Release all sdl components in the engine
 func (context *SDLComponents) Release() {
 	context.Renderer.Destroy()
 	context.Window.Destroy()
