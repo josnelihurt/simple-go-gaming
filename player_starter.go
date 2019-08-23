@@ -22,7 +22,10 @@ func (context *playerStarter) OnUpdate() error {
 	return nil
 }
 func (context *playerStarter) OnMessage(message *engine.Message) error {
-	if message.Code == engine.MsgCollision {
+	if message.Code == engine.MsgCollision &&
+		message.Sender.Tag == "enemy" &&
+		len(message.RelatedTo) > 0 &&
+		message.RelatedTo[0].Tag == "player" {
 		context.parent.Position = context.defaultPosition
 	}
 	return nil

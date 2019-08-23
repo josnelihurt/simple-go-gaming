@@ -11,11 +11,11 @@ import (
 var delta float64 // <-- where may I put you???
 
 type gameLogic struct {
-	sdlComponents   *engine.SDLComponents
-	elementManager  engine.ElementManager
-	player          *engine.Element
-	backgroundSound *engine.SoundPlayer
-	gameOverScreen  *engine.Element
+	sdlComponents  *engine.SDLComponents
+	elementManager engine.ElementManager
+	player         *engine.Element
+	//backgroundSound *engine.SoundPlayer
+	gameOverScreen *engine.Element
 }
 
 func newGameLogic() *gameLogic {
@@ -23,8 +23,9 @@ func newGameLogic() *gameLogic {
 	context.initSDLComponents()
 	context.initElementManager()
 	context.finishCondition()
-	context.backgroundSound = engine.NewSoundPlayer(nil, "sound/scene.wav", context.sdlComponents.AudioDev, []int{}, "")
-	go context.backgroundSound.Play()
+	// sdl.OpenMixAudio
+	// context.backgroundSound = engine.NewSoundPlayer(nil, "sounds/scene.wav", context.sdlComponents.AudioDev, []int{}, "")
+	// go context.backgroundSound.Play()
 	return context
 }
 func (context *gameLogic) Release() {
