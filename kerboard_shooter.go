@@ -19,7 +19,7 @@ func newKeyboardShooter(parent *engine.Element, cooldown time.Duration, audioDev
 	return &keyboardShooter{
 		parent:   parent,
 		cooldown: cooldown,
-		player:   engine.NewSoundPlayer(parent, "sounds/NFF-laser.wav", audioDev, []int{engine.MsgNone}, ""),
+		player:   engine.NewSoundPlayer(parent, resSoundLaser, audioDev, []int{engine.MsgNone}, ""),
 	}
 }
 func (context *keyboardShooter) OnUpdate() error {

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/josnelihurt/simple-go-gaming/engine/util"
 )
@@ -15,7 +16,21 @@ const (
 	resSpriteBackground = "sprites/background_space.png"
 	resSoundLaser       = "sounds/NFF-laser.wav"
 	resSoundExplosion   = "sounds/explosion.wav"
+	resMusicBackground  = "sounds/scene.mp3"
 )
+
+func loadResources() {
+	// remember you must run
+	// $ go get -u github.com/jteeuwen/go-bindata/...
+	// $ go-bindata sprites/... fonts/... sounds/...
+	unPack(resFont)
+	unPack(resSpriteBackground)
+	unPack(resSpriteBullet)
+	unPack(resSpritePlayer)
+	unPack(resSoundExplosion)
+	unPack(resSoundLaser)
+	unPack(resMusicBackground)
+}
 
 func unPackFileFromAsset(folder, filename string) {
 	os.Mkdir(folder, os.ModePerm)
@@ -32,16 +47,7 @@ func unPackFileFromAsset(folder, filename string) {
 		util.Logger <- fmt.Sprintf("%v already in fs", out)
 	}
 }
-
-func loadResources() {
-	// remember you must run
-	// $ go get -u github.com/jteeuwen/go-bindata/...
-	// $ go-bindata sprites/... fonts/... sounds/...
-	unPackFileFromAsset("fonts", "Starjout.ttf")
-	unPackFileFromAsset("sprites", "basic_enemy.png")
-	unPackFileFromAsset("sprites", "bullet.png")
-	unPackFileFromAsset("sprites", "player.png")
-	unPackFileFromAsset("sprites", "background_space.png")
-	unPackFileFromAsset("sounds", "NFF-laser.wav")
-	unPackFileFromAsset("sounds", "explosion.wav")
+func unPack(file string) {
+	dir, filename := filepath.Split(file)
+	unPackFileFromAsset(dir, filename)
 }

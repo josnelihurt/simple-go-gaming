@@ -33,7 +33,7 @@ func (context *gameLogic) Release() {
 	context.sdlComponents.Release()
 }
 func playMusic() error {
-	mp3File, err := os.Open("sounds/scene.mp3")
+	mp3File, err := os.Open(resMusicBackground)
 	if err != nil {
 		return err
 	}

@@ -12,6 +12,7 @@ const (
 	playerSpeed        = 5.0
 	playerShotCooldown = time.Millisecond * 200
 	playerScale        = 0.7
+	tagPlayer          = "player"
 )
 
 func newPlayer(components *engine.SDLComponents) *engine.Element {
@@ -19,9 +20,9 @@ func newPlayer(components *engine.SDLComponents) *engine.Element {
 	context.Z = 10
 	context.Active = true
 	context.Rotation = 180
-	context.Tag = "player"
+	context.Tag = tagPlayer
 
-	currentSpriteRenderer := engine.NewSpriteRenderer(context, components.Renderer, "sprites/player.png", playerScale)
+	currentSpriteRenderer := engine.NewSpriteRenderer(context, components.Renderer, resSpritePlayer, playerScale)
 	playerDefaultPosition := engine.Vector{
 		X: screenWidth / 2.0,
 		Y: screenHeight - currentSpriteRenderer.ScaledHeight/2.0,
@@ -42,8 +43,8 @@ func newPlayer(components *engine.SDLComponents) *engine.Element {
 		Width:  screenWidth - currentSpriteRenderer.ScaledWidth,
 		Height: screenHeight/5 - currentSpriteRenderer.ScaledHeight/2.0}
 	context.AddComponent(engine.NewKeyboardMover(context, allowedRect, &delta, playerSpeed))
-	context.AddComponent(engine.NewCollisionDetecter(context, true, "enemy"))
-	context.AddComponent(engine.NewSoundPlayer(context, "sounds/explosion.wav", components.AudioDev, []int{engine.MsgCollision, msgHitPlayer}, "enemy"))
+	context.AddComponent(engine.NewCollisionDetecter(context, true, tagEnemy))
+	context.AddComponent(engine.NewSoundPlayer(context, resSoundExplosion, components.AudioDev, []int{engine.MsgCollision, msgHitPlayer}, tagEnemy))
 	context.Collisions = append(context.Collisions,
 		engine.Circle{
 			Center: &context.Position,

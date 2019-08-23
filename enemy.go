@@ -10,6 +10,7 @@ const (
 	basicEnemySize = 110
 	enemyScale     = 1.0
 	enemySpeed     = 3.0
+	tagEnemy       = "enemy"
 )
 
 func newBasicEnemy(renderer *sdl.Renderer, position engine.Vector) *engine.Element {
@@ -19,11 +20,12 @@ func newBasicEnemy(renderer *sdl.Renderer, position engine.Vector) *engine.Eleme
 	context.Position = position
 	context.Rotation = 0
 	context.Active = true
+	context.Tag = tagEnemy
 
-	context.AddComponent(engine.NewSpriteRenderer(context, renderer, "sprites/basic_enemy.png", enemyScale))
-	context.AddComponent(engine.NewCollisionDetecter(context, true, "bullet", "player"))
+	context.AddComponent(engine.NewSpriteRenderer(context, renderer, resSpriteEnemy, enemyScale))
+	context.AddComponent(engine.NewCollisionDetecter(context, true, tagBullet, tagPlayer))
 	context.AddComponent(newEnemyMover(context))
-	context.AddComponent(engine.NewComponentDestroyerOnMessage(context, engine.MsgCollision, "bullet", "player"))
+	context.AddComponent(engine.NewComponentDestroyerOnMessage(context, engine.MsgCollision, tagBullet, tagPlayer))
 	context.Collisions = append(context.Collisions,
 		engine.Circle{
 			Center: &context.Position,

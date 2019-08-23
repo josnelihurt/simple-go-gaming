@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	backgroundSpeed = 0.5
+	backgroundSpeed = 0.9
 )
 
 func newBackground(components *engine.SDLComponents) *engine.Element {
