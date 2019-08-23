@@ -35,6 +35,24 @@ func (context *ElementManager) DisableElementsByTag(tags ...string) {
 	}
 }
 
+// EnableElementsByTag enables all elements by a given set of tags
+func (context *ElementManager) EnableElementsByTag(tags ...string) {
+	for _, currentElement := range context.elements {
+		if contains(tags, currentElement.Tag) {
+			currentElement.Active = true
+		}
+	}
+}
+
+// BroadcastMessage call broadcastMessae in all elements
+func (context *ElementManager) BroadcastMessage(message *Message) {
+	for _, item := range context.elements {
+		if item.Active {
+			item.BroadcastMessage(message)
+		}
+	}
+}
+
 // DisableAll disables all elements
 func (context *ElementManager) DisableAll() {
 	for _, item := range context.elements {

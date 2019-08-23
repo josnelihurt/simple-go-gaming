@@ -17,7 +17,7 @@ func newScore() *engine.Element {
 		defaultFontSize,
 		sdl.Color{R: 255, G: 255, B: 255})
 	context.AddComponent(textRenderer)
-	context.AddComponent(engine.NewCounterText(context, textRenderer, 0, 1, -1, "score:%03d", incrementCondition, nil))
+	context.AddComponent(engine.NewCounterText(context, textRenderer, 0, 1, -1, "score:%03d", incrementCondition, nil, nil))
 	return context
 }
 func incrementCondition(message *engine.Message, parent *engine.Element) bool {

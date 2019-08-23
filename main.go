@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 
+	"os"
+
 	"github.com/josnelihurt/simple-go-gaming/engine/util"
 )
 
@@ -19,7 +21,7 @@ func main() {
 	for {
 		if continueFlag := logic.loop(); continueFlag == false {
 			util.Logger <- fmt.Sprintf("exiting main:")
-			break
+			os.Exit(0)
 		}
 	}
 }

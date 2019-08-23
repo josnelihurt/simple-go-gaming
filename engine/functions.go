@@ -1,11 +1,5 @@
 package engine
 
-import (
-	"fmt"
-
-	"github.com/josnelihurt/simple-go-gaming/engine/util"
-)
-
 func isSingleAndEmpty(a []string) bool {
 	return len(a) == 1 && a[0] == ""
 }
@@ -31,7 +25,7 @@ func containsInt(a []int, x int) bool {
 // BindMessage connects a message-channel from one element to other
 func BindMessage(source *Element, destination *Element) {
 	source.RegisterEmmiterCallback(func(message *Message) error {
-		util.Logger <- fmt.Sprintf("from:%v to:%v msg:%v", source.Tag, destination.Tag, message)
+		//util.Logger <- fmt.Sprintf("from:%v to:%v msg:%v", source.Tag, destination.Tag, message)
 		destination.BroadcastMessage(message)
 		return nil
 	})

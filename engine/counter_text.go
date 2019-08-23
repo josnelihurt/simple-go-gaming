@@ -11,10 +11,12 @@ type CounterText struct {
 	parent               *Element
 	textRenderer         *TextRenderer
 	currentValue         int
+	initialValue         int
 	incrementStep        int
 	finalValue           int
 	textFormat           string
 	incrementCondition   func(message *Message, parent *Element) bool
+	resetCondition       func(message *Message, parent *Element) bool
 	onFinalValueDetected func(parent *Element)
 }
 
@@ -24,15 +26,19 @@ func NewCounterText(
 	initialValue, incrementStep, finalValue int,
 	textFormat string,
 	incrementCondition func(message *Message, parent *Element) bool,
+	resetCondition func(message *Message, parent *Element) bool,
 	onFinalValueDetected func(parent *Element),
 ) *CounterText {
 	return &CounterText{
-		parent:             parent,
-		currentValue:       initialValue,
-		textRenderer:       textRenderer,
-		incrementStep:      incrementStep,
-		incrementCondition: incrementCondition,
-		textFormat:         textFormat,
+		parent:               parent,
+		currentValue:         initialValue,
+		initialValue:         initialValue,
+		textRenderer:         textRenderer,
+		incrementStep:        incrementStep,
+		incrementCondition:   incrementCondition,
+		textFormat:           textFormat,
+		onFinalValueDetected: onFinalValueDetected,
+		resetCondition:       resetCondition,
 	}
 }
 
@@ -46,6 +52,9 @@ func (context *CounterText) OnUpdate() error {
 func (context *CounterText) OnMessage(message *Message) error {
 	if context.incrementCondition != nil && context.incrementCondition(message, context.parent) {
 		context.currentValue += context.incrementStep
+	}
+	if context.resetCondition != nil && context.resetCondition(message, context.parent) {
+		context.currentValue = context.initialValue
 	}
 	return nil
 }

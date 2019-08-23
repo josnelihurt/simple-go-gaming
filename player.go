@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"time"
 
 	"github.com/josnelihurt/simple-go-gaming/engine"
+	"github.com/josnelihurt/simple-go-gaming/engine/util"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -36,8 +38,7 @@ func newPlayer(components *engine.SDLComponents) *engine.Element {
 		defaultFontSize,
 		sdl.Color{R: 255, G: 255, B: 255})
 	context.AddComponent(textRenderer)
-	context.AddComponent(newPlayerLifeCounter(context, textRenderer))
-	context.AddComponent(engine.NewCounterText(context, textRenderer, 3, -1, 0, "life:%03d", incrementConditionPlayer, onPlayerLifeEmpty))
+	context.AddComponent(engine.NewCounterText(context, textRenderer, 3, -1, 0, "life:%03d", incrementConditionPlayer, resetPlayerLife, onPlayerLifeEmpty))
 	allowedRect := &engine.Rect{
 		X:      currentSpriteRenderer.ScaledWidth / 2.0,
 		Y:      4 * screenHeight / 5,
@@ -61,7 +62,12 @@ func incrementConditionPlayer(message *engine.Message, context *engine.Element) 
 		len(message.RelatedTo) > 0 &&
 		message.RelatedTo[0].Tag == tagPlayer) || message.Code == msgHitPlayer
 }
+func resetPlayerLife(message *engine.Message, context *engine.Element) bool {
+	return message.Code == msgPlayerDead
+}
+
 func onPlayerLifeEmpty(context *engine.Element) {
+	util.Logger <- fmt.Sprintf(":/")
 	context.BroadcastMessage(&engine.Message{
 		Code:                msgPlayerDead,
 		Sender:              context,
