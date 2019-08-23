@@ -16,17 +16,18 @@ func newPlayerStarter(parent *engine.Element, defaultPosition engine.Vector) *pl
 		defaultPosition: defaultPosition,
 	}
 }
-func (context *playerStarter) OnDraw(renderer *sdl.Renderer) error     { return nil }
-func (context *playerStarter) OnCollision(other *engine.Element) error { return nil }
 func (context *playerStarter) OnUpdate() error {
 	return nil
 }
 func (context *playerStarter) OnMessage(message *engine.Message) error {
 	if message.Code == engine.MsgCollision &&
-		message.Sender.Tag == "enemy" &&
+		message.Sender.Tag == tagEnemy &&
 		len(message.RelatedTo) > 0 &&
-		message.RelatedTo[0].Tag == "player" {
+		message.RelatedTo[0].Tag == tagPlayer {
 		context.parent.Position = context.defaultPosition
 	}
 	return nil
 }
+
+func (context *playerStarter) OnDraw(renderer *sdl.Renderer) error     { return nil }
+func (context *playerStarter) OnCollision(other *engine.Element) error { return nil }

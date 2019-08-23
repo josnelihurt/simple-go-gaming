@@ -32,7 +32,7 @@ func containsInt(a []int, x int) bool {
 func BindMessage(source *Element, destination *Element) {
 	source.RegisterEmmiterCallback(func(message *Message) error {
 		util.Logger <- fmt.Sprintf("from:%v to:%v msg:%v", source.Tag, destination.Tag, message)
-		destination.BroadcastMessageToComponents(message)
+		destination.BroadcastMessage(message)
 		return nil
 	})
 }

@@ -22,7 +22,7 @@ func (context *enemyMover) OnUpdate() error {
 	if context.parent.Position.Y >= screenHeight {
 		util.Logger <- "enemy has finished his race"
 		context.parent.Active = false
-		context.parent.BroadcastMessageToComponents(&engine.Message{
+		context.parent.BroadcastMessage(&engine.Message{
 			Code:                msgHitPlayer,
 			Sender:              context.parent,
 			SendToOtherElements: true,

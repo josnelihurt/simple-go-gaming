@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"time"
 
@@ -79,12 +80,22 @@ func (context *gameLogic) initElementManager() {
 	context.elementManager = engine.NewElementManager()
 	context.elementManager.InsertSlice(context.createElements())
 }
-func (context *gameLogic) enemyAwaker(enemies []*engine.Element) {
+func getActivesElements(enemies []*engine.Element) (result []*engine.Element) {
 	for _, currentElement := range enemies {
 		if currentElement.Active {
-			currentElement.GetComponent(&enemyMover{}).(*enemyMover).active = true
-			time.Sleep(4000 * time.Millisecond)
+			result = append(result, currentElement)
 		}
+	}
+	return result
+}
+func (context *gameLogic) enemyAwaker(enemies []*engine.Element) {
+	for {
+		actives := getActivesElements(enemies)
+		if len(actives) == 0 {
+			break
+		}
+		actives[rand.Intn(len(actives))].GetFirstComponent(&enemyMover{}).(*enemyMover).active = true
+		time.Sleep(4000 * time.Millisecond)
 	}
 }
 func (context *gameLogic) finishCondition() {

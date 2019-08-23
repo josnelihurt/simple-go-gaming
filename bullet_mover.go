@@ -16,9 +16,6 @@ func newBulletMover(parent *engine.Element, speed float64) *bulletMover {
 		speed:  speed,
 	}
 }
-func (context *bulletMover) OnDraw(renderer *sdl.Renderer) error     { return nil }
-func (context *bulletMover) OnCollision(other *engine.Element) error { return nil }
-func (context *bulletMover) OnMessage(message *engine.Message) error { return nil }
 func (context *bulletMover) OnUpdate() error {
 	parent := context.parent
 	parent.Position.Y -= bulletSpeed * delta
@@ -30,3 +27,7 @@ func (context *bulletMover) OnUpdate() error {
 
 	return nil
 }
+
+func (context *bulletMover) OnDraw(renderer *sdl.Renderer) error     { return nil }
+func (context *bulletMover) OnCollision(other *engine.Element) error { return nil }
+func (context *bulletMover) OnMessage(message *engine.Message) error { return nil }
