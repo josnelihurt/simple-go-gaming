@@ -37,6 +37,7 @@ func newPlayer(components *engine.SDLComponents) *engine.Element {
 		sdl.Color{R: 255, G: 255, B: 255})
 	context.AddComponent(textRenderer)
 	context.AddComponent(newPlayerLifeCounter(context, textRenderer))
+	context.AddComponent(engine.NewCounterText(context, textRenderer, 3, -1, 0, "life:%03d", incrementConditionPlayer, onPlayerLifeEmpty))
 	allowedRect := &engine.Rect{
 		X:      currentSpriteRenderer.ScaledWidth / 2.0,
 		Y:      4 * screenHeight / 5,
@@ -52,4 +53,19 @@ func newPlayer(components *engine.SDLComponents) *engine.Element {
 		})
 
 	return context
+}
+
+func incrementConditionPlayer(message *engine.Message, context *engine.Element) bool {
+	return (message.Code == engine.MsgCollision &&
+		message.Sender.Tag == tagEnemy &&
+		len(message.RelatedTo) > 0 &&
+		message.RelatedTo[0].Tag == tagPlayer) || message.Code == msgHitPlayer
+}
+func onPlayerLifeEmpty(context *engine.Element) {
+	context.BroadcastMessage(&engine.Message{
+		Code:                msgPlayerDead,
+		Sender:              context,
+		Data:                "playerDead",
+		SendToOtherElements: true,
+	})
 }

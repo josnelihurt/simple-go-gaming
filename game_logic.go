@@ -27,6 +27,7 @@ func newGameLogic() *gameLogic {
 	context.initSDLComponents()
 	context.initElementManager()
 	context.finishCondition()
+
 	go playMusic()
 	return context
 }
@@ -94,6 +95,7 @@ func (context *gameLogic) enemyAwaker(enemies []*engine.Element) {
 		if len(actives) == 0 {
 			break
 		}
+		rand.Seed(time.Now().UnixNano())
 		actives[rand.Intn(len(actives))].GetFirstComponent(&enemyMover{}).(*enemyMover).active = true
 		time.Sleep(4000 * time.Millisecond)
 	}
