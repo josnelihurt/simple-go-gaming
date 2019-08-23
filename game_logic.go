@@ -59,7 +59,7 @@ func playMusic() error {
 	}
 }
 
-// It doesn't work in my laptop
+// It doesn't work on my laptop
 // mix.Init(mix.INIT_MP3)
 // mix.OpenAudio(44100, //mix.DEFAULT_FREQUENCY,
 // 	16, 2, 4096)
@@ -90,7 +90,7 @@ func (context *gameLogic) enemyAwaker(enemies []*engine.Element) {
 func (context *gameLogic) finishCondition() {
 	context.player.RegisterEmmiterCallback(func(message *engine.Message) error {
 		if message.Code == msgPlayerDead {
-			context.elementManager.DisableElementsByTag("enemy", "player", "score")
+			context.elementManager.DisableElementsByTag(tagEnemy, tagPlayer, tagScore)
 			context.gameOverScreen.Active = true
 		}
 		return nil

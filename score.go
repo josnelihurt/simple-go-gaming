@@ -6,11 +6,12 @@ import (
 )
 
 const (
-	scoreX = 220
+	scoreX   = 220
+	tagScore = "score"
 )
 
 func newScore() *engine.Element {
-	context := &engine.Element{Active: true, Tag: "score", Z: 99}
+	context := &engine.Element{Active: true, Tag: tagScore, Z: 99}
 	textRenderer := engine.NewTextRenderer(
 		&engine.Vector{X: (screenWidth - scoreX), Y: upperTextY},
 		defaultFontSize,
