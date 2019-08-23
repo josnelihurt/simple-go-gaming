@@ -30,7 +30,7 @@ func (context *keyboardShooter) OnUpdate() error {
 	if keys[sdl.SCANCODE_SPACE] == 1 {
 		if time.Since(context.lastShot) > context.cooldown {
 			context.player.Play()
-			sprite := parent.GetComponent(&engine.SpriteRenderer{}).(*engine.SpriteRenderer)
+			sprite := parent.GetFirstComponent(&engine.SpriteRenderer{}).(*engine.SpriteRenderer)
 			context.shoot(parent.Position.X+23, parent.Position.Y-sprite.ScaledHeight/2)
 			context.shoot(parent.Position.X-23, parent.Position.Y-sprite.ScaledHeight/2)
 			context.lastShot = time.Now()
@@ -38,9 +38,6 @@ func (context *keyboardShooter) OnUpdate() error {
 	}
 	return nil
 }
-func (context *keyboardShooter) OnDraw(enderer *sdl.Renderer) error      { return nil }
-func (context *keyboardShooter) OnCollision(other *engine.Element) error { return nil }
-func (context *keyboardShooter) OnMessage(message *engine.Message) error { return nil }
 func (context *keyboardShooter) shoot(x, y float64) {
 	if currentBullet, ok := bulletFromPool(); ok {
 		currentBullet.Active = true
@@ -48,3 +45,7 @@ func (context *keyboardShooter) shoot(x, y float64) {
 		currentBullet.Position.Y = y
 	}
 }
+
+func (context *keyboardShooter) OnDraw(enderer *sdl.Renderer) error      { return nil }
+func (context *keyboardShooter) OnCollision(other *engine.Element) error { return nil }
+func (context *keyboardShooter) OnMessage(message *engine.Message) error { return nil }

@@ -21,12 +21,10 @@ func newPlayerLifeCounter(parent *engine.Element, textRenderer *engine.TextRende
 		textRenderer: textRenderer,
 	}
 }
-func (context *playerLifeCounter) OnDraw(renderer *sdl.Renderer) error     { return nil }
-func (context *playerLifeCounter) OnCollision(other *engine.Element) error { return nil }
 func (context *playerLifeCounter) OnUpdate() error {
 	context.textRenderer.SetNewText(fmt.Sprintf("life:%03d", context.currentValue))
 	if context.currentValue == 0 {
-		context.parent.BroadcastMessageToComponents(&engine.Message{
+		context.parent.BroadcastMessage(&engine.Message{
 			Code:                msgPlayerDead,
 			Sender:              context.parent,
 			Data:                "playerDead",
@@ -38,11 +36,14 @@ func (context *playerLifeCounter) OnUpdate() error {
 func (context *playerLifeCounter) OnMessage(message *engine.Message) error {
 	util.Logger <- fmt.Sprintf("life hit:%v", message)
 	if (message.Code == engine.MsgCollision &&
-		message.Sender.Tag == "enemy" &&
+		message.Sender.Tag == tagEnemy &&
 		len(message.RelatedTo) > 0 &&
-		message.RelatedTo[0].Tag == "player") || message.Code == msgHitPlayer {
+		message.RelatedTo[0].Tag == tagPlayer) || message.Code == msgHitPlayer {
 		context.currentValue--
 	}
 
 	return nil
 }
+
+func (context *playerLifeCounter) OnDraw(renderer *sdl.Renderer) error     { return nil }
+func (context *playerLifeCounter) OnCollision(other *engine.Element) error { return nil }

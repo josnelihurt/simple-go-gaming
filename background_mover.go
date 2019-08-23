@@ -28,9 +28,11 @@ func newBackgroundMover(renderer *sdl.Renderer) *backgroundMover {
 		bitmapWidth:  width,
 	}
 }
+func (context *backgroundMover) OnCollision(other *engine.Element) error {	return nil}
+func (context *backgroundMover) OnMessage(message *engine.Message) error {	return nil}
 func (context *backgroundMover) OnUpdate() error {
 	context.currentY += backgroundSpeed * delta
-
+	
 	if int32(context.currentY) >= context.bitmapHeight {
 		context.currentY = 0
 	}
@@ -56,11 +58,5 @@ func (context *backgroundMover) OnDraw(renderer *sdl.Renderer) error {
 		)
 	}
 
-	return nil
-}
-func (context *backgroundMover) OnCollision(other *engine.Element) error {
-	return nil
-}
-func (context *backgroundMover) OnMessage(message *engine.Message) error {
 	return nil
 }

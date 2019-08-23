@@ -29,7 +29,7 @@ func (context *CollisionDetecter) OnUpdate() error {
 }
 func (context *CollisionDetecter) OnCollision(other *Element) error {
 	if isSingleAndEmpty(context.vulnerableTo) || contains(context.vulnerableTo, other.Tag) {
-		context.parent.BroadcastMessageToComponents(&Message{
+		context.parent.BroadcastMessage(&Message{
 			Sender:              context.parent,
 			Code:                MsgCollision,
 			RelatedTo:           []*Element{other},

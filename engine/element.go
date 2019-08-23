@@ -9,6 +9,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+//Element represents a game concept
 type Element struct {
 	components     []Component
 	messageEmmiter []func(*Message) error
@@ -20,10 +21,13 @@ type Element struct {
 	Z              uint8
 }
 
+// RegisterEmmiterCallback insert a function callback in the observers list to call when a message is rised
 func (context *Element) RegisterEmmiterCallback(callback func(*Message) error) {
 	context.messageEmmiter = append(context.messageEmmiter, callback)
 }
-func (context *Element) BroadcastMessageToComponents(message *Message) error {
+
+// BroadcastMessage sends a message to other components
+func (context *Element) BroadcastMessage(message *Message) error {
 	for _, currentComponent := range context.components {
 		if err := currentComponent.OnMessage(message); err != nil {
 			return err
@@ -39,6 +43,8 @@ func (context *Element) BroadcastMessageToComponents(message *Message) error {
 
 	return nil
 }
+
+//Draw calls the OnDraw method on all components
 func (context *Element) Draw(renderer *sdl.Renderer) error {
 	for _, currentComponent := range context.components {
 		if err := currentComponent.OnDraw(renderer); err != nil {
@@ -47,6 +53,8 @@ func (context *Element) Draw(renderer *sdl.Renderer) error {
 	}
 	return nil
 }
+
+// Update calls the OnUpdate method on all components
 func (context *Element) Update() error {
 	for _, currentComponent := range context.components {
 		if err := currentComponent.OnUpdate(); err != nil {
@@ -56,17 +64,13 @@ func (context *Element) Update() error {
 	return nil
 }
 
+//AddComponent inserts a component in the internal data structure
 func (context *Element) AddComponent(new Component) {
-	for _, existing := range context.components {
-		if reflect.TypeOf(existing) == reflect.TypeOf(new) {
-			panic(fmt.Sprintf("attempt to add new component with existing type %v",
-				reflect.TypeOf(new)))
-		}
-	}
 	context.components = append(context.components, new)
 }
 
-func (context *Element) GetComponent(withType Component) Component {
+//GetFirstComponent obtains the firts component by its type
+func (context *Element) GetFirstComponent(withType Component) Component {
 	componentType := reflect.TypeOf(withType)
 	for _, currentComponent := range context.components {
 		if reflect.TypeOf(currentComponent) == componentType {
@@ -77,6 +81,7 @@ func (context *Element) GetComponent(withType Component) Component {
 	panic(fmt.Sprintf("there is not such component %v", componentType))
 }
 
+//Collision calls OnCollision method in all components
 func (context *Element) Collision(other *Element) error {
 	for _, currentComponent := range context.components {
 		if err := currentComponent.OnCollision(other); err != nil {

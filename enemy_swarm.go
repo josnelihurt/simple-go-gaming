@@ -15,7 +15,7 @@ func createEnemySwarm(renderer *sdl.Renderer) (swarm []*engine.Element) {
 			y := float64(j)*basicEnemySize + (basicEnemySize / 2.0) + 50
 
 			enemy := newBasicEnemy(renderer, engine.Vector{X: x, Y: y})
-			enemy.Tag = "enemy"
+			enemy.Tag = tagEnemy
 			swarm = append(swarm, enemy)
 		}
 	}

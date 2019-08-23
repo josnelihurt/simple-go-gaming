@@ -20,16 +20,17 @@ func newScoreCounter(parent *engine.Element, textRenderer *engine.TextRenderer) 
 		textRenderer: textRenderer,
 	}
 }
-func (context *scoreCounter) OnDraw(renderer *sdl.Renderer) error     { return nil }
-func (context *scoreCounter) OnCollision(other *engine.Element) error { return nil }
 
 func (context *scoreCounter) OnUpdate() error {
 	context.textRenderer.SetNewText(fmt.Sprintf("score:%03d", context.currentValue))
 	return nil
 }
 func (context *scoreCounter) OnMessage(message *engine.Message) error {
-	if message.Code == engine.MsgCollision && message.Sender.Tag == "enemy" && message.RelatedTo[0].Tag == "bullet" {
+	if message.Code == engine.MsgCollision && message.Sender.Tag == tagEnemy && message.RelatedTo[0].Tag == tagBullet {
 		context.currentValue++
 	}
 	return nil
 }
+
+func (context *scoreCounter) OnDraw(renderer *sdl.Renderer) error     { return nil }
+func (context *scoreCounter) OnCollision(other *engine.Element) error { return nil }
