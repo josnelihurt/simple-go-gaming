@@ -2,74 +2,39 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"math/rand"
-	"os"
 	"time"
 
-	"github.com/hajimehoshi/go-mp3"
-	"github.com/hajimehoshi/oto"
 	"github.com/josnelihurt/simple-go-gaming/engine"
 	"github.com/josnelihurt/simple-go-gaming/engine/util"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 var delta float64 // <-- where may I put you???
 
 type gameLogic struct {
-	sdlComponents  *engine.SDLComponents
-	elementManager engine.ElementManager
-	gameOverScreen *engine.Element
-	player         *engine.Element
+	sdlComponents         *engine.SDLComponents
+	elementManager        engine.ElementManager
+	gameOverScreen        *engine.Element
+	player                *engine.Element
+	swarm                 *enemySrawm
+	swarmActivationTime   int
+	pressAnyKeyToContinue chan struct{}
 }
 
 func newGameLogic() *gameLogic {
 	context := &gameLogic{}
+	context.swarmActivationTime = 2000
 	context.initSDLComponents()
 	context.initElementManager()
 	context.finishCondition()
-
-	go playMusic()
+	go engine.PlayMusicLoop(resMusicBackground)
+	context.pressAnyKeyToContinue = make(chan struct{}, 2)
 	return context
 }
 func (context *gameLogic) Release() {
 	context.sdlComponents.Release()
 }
-func playMusic() error {
-	mp3File, err := os.Open(resMusicBackground)
-	if err != nil {
-		return err
-	}
-	defer mp3File.Close()
-
-	decoder, err := mp3.NewDecoder(mp3File)
-	if err != nil {
-		return err
-	}
-
-	player, err := oto.NewPlayer(decoder.SampleRate(), 2, 2, 8192)
-	if err != nil {
-		return err
-	}
-	defer player.Close()
-
-	for {
-		fmt.Printf("Length: %d[bytes]\n", decoder.Length())
-		if _, err := io.Copy(player, decoder); err != nil {
-			return err
-		}
-		decoder.Seek(0, 0)
-	}
-}
-
-// It doesn't work on my laptop
-// mix.Init(mix.INIT_MP3)
-// mix.OpenAudio(44100, //mix.DEFAULT_FREQUENCY,
-// 	16, 2, 4096)
-// music, err := mix.LoadMUS("sounds/scene.mp3")
-// if err != nil {
-// 	fmt.Println(err)
-// }
-// music.Play(-1)
 func (context *gameLogic) initSDLComponents() {
 	var err error
 	context.sdlComponents, err = engine.NewSDLComponents(screenWidth, screenHeight, "simple-game")
@@ -81,30 +46,38 @@ func (context *gameLogic) initElementManager() {
 	context.elementManager = engine.NewElementManager()
 	context.elementManager.InsertSlice(context.createElements())
 }
-func getActivesElements(enemies []*engine.Element) (result []*engine.Element) {
-	for _, currentElement := range enemies {
-		if currentElement.Active {
-			result = append(result, currentElement)
-		}
-	}
-	return result
-}
-func (context *gameLogic) enemyAwaker(enemies []*engine.Element) {
+func (context *gameLogic) enemyAwaker() {
 	for {
-		actives := getActivesElements(enemies)
+		actives := context.swarm.getActives()
 		if len(actives) == 0 {
-			break
+			context.elementManager.BroadcastMessage(&engine.Message{
+				Code: msgLevelUp,
+			})
+			context.swarm.activateAll()
+			context.swarm.setInitialPositions()
+			context.swarmActivationTime /= 2
+
+			continue
 		}
 		rand.Seed(time.Now().UnixNano())
 		actives[rand.Intn(len(actives))].GetFirstComponent(&enemyMover{}).(*enemyMover).active = true
-		time.Sleep(4000 * time.Millisecond)
+		select {
+		case <-context.pressAnyKeyToContinue:
+			context.swarm.setInitialPositions()
+			context.swarm.deActivateAll()
+			return
+		case <-time.After(time.Duration(context.swarmActivationTime) * time.Millisecond):
+			break
+		}
 	}
 }
 func (context *gameLogic) finishCondition() {
 	context.player.RegisterEmmiterCallback(func(message *engine.Message) error {
+		context.elementManager.GetElementsByTag(tagLevel)[0].BroadcastMessage(message)
 		if message.Code == msgPlayerDead {
 			context.elementManager.DisableElementsByTag(tagEnemy, tagPlayer, tagScore)
 			context.gameOverScreen.Active = true
+			context.pressAnyKeyToContinue <- struct{}{}
 		}
 		return nil
 	})
@@ -114,15 +87,16 @@ func (context *gameLogic) createElements() (elements []*engine.Element) {
 	context.player = newPlayer(context.sdlComponents)
 	background := newBackground(context.sdlComponents)
 	bulletPool := initBulletPool(context.sdlComponents.Renderer)
-	enemySwarm := createEnemySwarm(context.sdlComponents.Renderer)
-	go context.enemyAwaker(enemySwarm)
-	engine.BindMessages(enemySwarm, context.player)
-	engine.BindMessages(enemySwarm, score)
+	context.swarm = newEnemySwarm(context.sdlComponents.Renderer)
+	level := newLevel(context.sdlComponents)
+	engine.BindMessages(context.swarm.enemies, context.player)
+	engine.BindMessages(context.swarm.enemies, score)
 	context.gameOverScreen = newGameOverScreen(context.sdlComponents)
+	go context.enemyAwaker()
 
-	elements = append(elements, score, context.player, background, context.gameOverScreen)
+	elements = append(elements, score, context.player, background, context.gameOverScreen, level)
 	elements = append(elements, bulletPool...)
-	elements = append(elements, enemySwarm...)
+	elements = append(elements, context.swarm.enemies...)
 	return
 }
 func (context *gameLogic) updateRenderer() {
@@ -140,6 +114,18 @@ func (context *gameLogic) loop() (continueFlag bool) {
 		util.Logger <- fmt.Sprintf("exiting gameLoop:")
 		return continueFlag
 	}
+
+	if context.gameOverScreen.Active {
+
+		keys := sdl.GetKeyboardState()
+		if keys[sdl.SCANCODE_SPACE] == 1 {
+			context.gameOverScreen.Active = false
+			context.swarmActivationTime = 2000
+			context.elementManager.EnableElementsByTag(tagEnemy, tagPlayer, tagScore)
+			go context.enemyAwaker()
+		}
+	}
+
 	context.updateRenderer()
 	delta = time.Since(frameStartTimer).Seconds() * targetTicksPerSecond
 	return true
