@@ -7,6 +7,16 @@ import (
 	"github.com/josnelihurt/simple-go-gaming/engine/util"
 )
 
+const (
+	resFont             = "fonts/Starjout.ttf"
+	resSpriteEnemy      = "sprites/basic_enemy.png"
+	resSpriteBullet     = "sprites/bullet.png"
+	resSpritePlayer     = "sprites/player.png"
+	resSpriteBackground = "sprites/background_space.png"
+	resSoundLaser       = "sounds/NFF-laser.wav"
+	resSoundExplosion   = "sounds/explosion.wav"
+)
+
 func unPackFileFromAsset(folder, filename string) {
 	os.Mkdir(folder, os.ModePerm)
 	out := fmt.Sprintf("%v/%v", folder, filename)
