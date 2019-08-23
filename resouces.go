@@ -20,34 +20,34 @@ const (
 )
 
 func loadResources() {
+	util.Logger <- fmt.Sprintf("%v", AssetNames())
 	// remember you must run
 	// $ go get -u github.com/jteeuwen/go-bindata/...
 	// $ go-bindata sprites/... fonts/... sounds/...
 	unPack(resFont)
 	unPack(resSpriteBackground)
 	unPack(resSpriteBullet)
+	unPack(resSpriteEnemy)
 	unPack(resSpritePlayer)
 	unPack(resSoundExplosion)
 	unPack(resSoundLaser)
 	unPack(resMusicBackground)
 }
-
-func unPackFileFromAsset(folder, filename string) {
+func unPack(file string) {
+	folder, _ := filepath.Split(file)
 	os.Mkdir(folder, os.ModePerm)
-	out := fmt.Sprintf("%v/%v", folder, filename)
-	if _, err := os.Stat(out); os.IsNotExist(err) {
-		file, _ := Asset(out)
-		fileIO, _ := os.Create(out)
-		if _, err := fileIO.Write(file); err == nil {
-			util.Logger <- fmt.Sprintf("%v unpacked from resources", out)
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		fileBytes, erro := Asset(file)
+		if erro != nil {
+			util.Logger <- fmt.Sprintf("resource %v error %v ", file, erro)
+		}
+		fileIO, _ := os.Create(file)
+		if _, err := fileIO.Write(fileBytes); err == nil {
+			util.Logger <- fmt.Sprintf("%v unpacked from resources", file)
 		}
 		fileIO.Sync()
 		fileIO.Close()
 	} else {
-		util.Logger <- fmt.Sprintf("%v already in fs", out)
+		util.Logger <- fmt.Sprintf("%v already in fs", file)
 	}
-}
-func unPack(file string) {
-	dir, filename := filepath.Split(file)
-	unPackFileFromAsset(dir, filename)
 }
