@@ -17,7 +17,7 @@ type backgroundMover struct {
 }
 
 func newBackgroundMover(renderer *sdl.Renderer) *backgroundMover {
-	texture := engine.TextureFromFile(renderer, "sprites/background_space.png")
+	texture := engine.TextureFromFile(renderer, resSpriteBackground)
 	_, _, width, height, err := texture.Query()
 	if err != nil {
 		panic(fmt.Errorf("querying texture:%v", err))

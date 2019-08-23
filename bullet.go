@@ -8,16 +8,17 @@ import (
 const (
 	bulletSpeed = 10
 	bulletScale = 1.0
+	tagBullet   = "bullet"
 )
 
 func newBullet(renderer *sdl.Renderer) *engine.Element {
 	context := &engine.Element{}
 	context.Z = 10
 
-	context.AddComponent(engine.NewSpriteRenderer(context, renderer, "sprites/bullet.png", bulletScale))
+	context.AddComponent(engine.NewSpriteRenderer(context, renderer, resSpriteBullet, bulletScale))
 	context.AddComponent(newBulletMover(context, bulletSpeed))
 	context.AddComponent(engine.NewCollisionDetecter(context, false, ""))
-	context.AddComponent(engine.NewComponentDestroyerOnMessage(context, engine.MsgCollision, "enemy"))
+	context.AddComponent(engine.NewComponentDestroyerOnMessage(context, engine.MsgCollision, tagEnemy))
 
 	context.Collisions = append(context.Collisions,
 		engine.Circle{
@@ -27,7 +28,7 @@ func newBullet(renderer *sdl.Renderer) *engine.Element {
 
 	context.Active = false
 	context.Rotation = 0.0
-	context.Tag = "bullet"
+	context.Tag = tagBullet
 
 	return context
 }
