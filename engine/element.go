@@ -12,7 +12,7 @@ import (
 //Element represents a game concept
 type Element struct {
 	components     []Component
-	messageEmmiter []func(*Message) error
+	messageEmitter []func(*Message) error
 	Active         bool
 	Collisions     []Circle
 	Position       Vector
@@ -21,9 +21,9 @@ type Element struct {
 	Z              uint8
 }
 
-// RegisterEmmiterCallback insert a function callback in the observers list to call when a message is rised
-func (context *Element) RegisterEmmiterCallback(callback func(*Message) error) {
-	context.messageEmmiter = append(context.messageEmmiter, callback)
+// RegisterEmmitterCallback insert a function callback in the observers list to call when a message is rised
+func (context *Element) RegisterEmitterrCallback(callback func(*Message) error) {
+	context.messageEmitter = append(context.messageEmitter, callback)
 }
 
 // BroadcastMessage sends a message to other components
@@ -33,8 +33,8 @@ func (context *Element) BroadcastMessage(message *Message) error {
 			return err
 		}
 	}
-	if len(context.messageEmmiter) > 0 && message.SendToOtherElements {
-		for _, currentCallback := range context.messageEmmiter {
+	if len(context.messageEmitter) > 0 && message.SendToOtherElements {
+		for _, currentCallback := range context.messageEmitter {
 			if err := currentCallback(message); err != nil {
 				util.Logger <- fmt.Sprintf("Error in msg %v", err)
 			}

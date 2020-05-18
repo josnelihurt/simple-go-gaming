@@ -31,9 +31,9 @@ func (context *SoundPlayer) Play() {
 	sdl.PauseAudioDevice(context.audioDevice, false)
 }
 
-func (context *SoundPlayer) OnDraw(enderer *sdl.Renderer) error { return nil }
-func (context *SoundPlayer) OnUpdate() error                    { return nil }
-func (context *SoundPlayer) OnCollision(other *Element) error   { return nil }
+func (context *SoundPlayer) OnDraw(renderer *sdl.Renderer) error { return nil }
+func (context *SoundPlayer) OnUpdate() error                     { return nil }
+func (context *SoundPlayer) OnCollision(other *Element) error    { return nil }
 func (context *SoundPlayer) OnMessage(message *Message) error {
 	if containsInt(context.messageCodes, message.Code) {
 		if isSingleAndEmpty(context.relatedToTag) || contains(context.relatedToTag, message.RelatedTo[0].Tag) {

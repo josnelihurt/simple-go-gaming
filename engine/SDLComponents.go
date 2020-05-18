@@ -48,7 +48,7 @@ func createRenderer(screenWidth, screenHeight int32, gameName string) (*sdl.Rend
 	}
 	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
-		util.Logger <- fmt.Sprintf("inititalizing renderer:%v", err)
+		util.Logger <- fmt.Sprintf("initializing renderer:%v", err)
 		return nil, nil, err
 	}
 
@@ -63,7 +63,7 @@ func createRenderer(screenWidth, screenHeight int32, gameName string) (*sdl.Rend
 func NewSDLComponents(screenWidth, screenHeight int32, gameName string) (context *SDLComponents, err error) {
 	context = &SDLComponents{}
 	if context.Renderer, context.Window, err = createRenderer(screenWidth, screenHeight, gameName); err != nil {
-		util.Logger <- fmt.Sprintf("init errro%v:", err)
+		util.Logger <- fmt.Sprintf("init error%v:", err)
 		return nil, err
 	}
 	context.AudioDev = openAudioDevice()

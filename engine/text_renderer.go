@@ -10,14 +10,14 @@ import (
 
 //TextRenderer shows a new text on screen
 type TextRenderer struct {
-	currenValue string
-	newValue    string
-	width       int32
-	height      int32
-	position    *Vector
-	texture     *sdl.Texture
-	font        *ttf.Font
-	textColor   sdl.Color
+	currentValue string
+	newValue     string
+	width        int32
+	height       int32
+	position     *Vector
+	texture      *sdl.Texture
+	font         *ttf.Font
+	textColor    sdl.Color
 }
 
 //NewTextRenderer creates a new instance of TextRenderer
@@ -46,7 +46,7 @@ func (context *TextRenderer) SetNewText(text string) {
 }
 
 //RenderNewValue update the internal surface, this operation could be expensive,
-// and this is called automatiacally if the internal text is not the same as the text represented on screen (OnDraw)
+// and this is called automatically if the internal text is not the same as the text represented on screen (OnDraw)
 func (context *TextRenderer) RenderNewValue(renderer *sdl.Renderer) error {
 	surface, err := context.font.RenderUTF8Solid(context.newValue, context.textColor)
 	if err != nil {
@@ -63,12 +63,12 @@ func (context *TextRenderer) RenderNewValue(renderer *sdl.Renderer) error {
 		return fmt.Errorf("querying texture:%v", err)
 	}
 
-	context.currenValue = context.newValue
+	context.currentValue = context.newValue
 	return nil
 }
 
 func (context *TextRenderer) OnDraw(renderer *sdl.Renderer) error {
-	if context.currenValue != context.newValue {
+	if context.currentValue != context.newValue {
 		if err := context.RenderNewValue(renderer); err != nil {
 			return err
 		}

@@ -17,7 +17,7 @@ type gameLogic struct {
 	elementManager        engine.ElementManager
 	gameOverScreen        *engine.Element
 	player                *engine.Element
-	swarm                 *enemySrawm
+	swarm                 *enemySwarm
 	swarmActivationTime   int
 	pressAnyKeyToContinue chan struct{}
 }
@@ -39,7 +39,7 @@ func (context *gameLogic) initSDLComponents() {
 	var err error
 	context.sdlComponents, err = engine.NewSDLComponents(screenWidth, screenHeight, "simple-game")
 	if err != nil {
-		panic("Unable to start sdl commponents")
+		panic("Unable to start sdl components")
 	}
 }
 func (context *gameLogic) initElementManager() {
@@ -72,7 +72,7 @@ func (context *gameLogic) enemyAwaker() {
 	}
 }
 func (context *gameLogic) finishCondition() {
-	context.player.RegisterEmmiterCallback(func(message *engine.Message) error {
+	context.player.RegisterEmitterrCallback(func(message *engine.Message) error {
 		context.elementManager.GetElementsByTag(tagLevel)[0].BroadcastMessage(message)
 		if message.Code == msgPlayerDead {
 			context.elementManager.DisableElementsByTag(tagEnemy, tagPlayer, tagScore)
