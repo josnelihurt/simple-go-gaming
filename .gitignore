@@ -11,3 +11,7 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 simple-go-gaming
+
+vendor/
+win32dll/SDL2-2.0.8/
+win32dll/SDL2-2.0.8.tar.gz
